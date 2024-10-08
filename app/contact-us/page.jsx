@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 
@@ -12,9 +12,9 @@ const ContactUs = () => {
     emailjs
       .sendForm(
         "service_b3u5zxa",
-        "template_7eif1gi", 
+        "template_7eif1gi",
         form.current,
-        "nxC4W-fiaC4DvJpPJ" 
+        "nxC4W-fiaC4DvJpPJ"
       )
       .then(
         () => {
@@ -22,6 +22,7 @@ const ContactUs = () => {
         },
         (error) => {
           console.error("Error sending email:", error);
+          setIsMsgSent(true);
         }
       );
   };
@@ -29,9 +30,11 @@ const ContactUs = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12">
       <div className="max-w-lg w-full bg-white p-8 rounded-lg shadow-lg">
-      {!isMsgSent && <h2 className="text-3xl font-bold text-center mb-6 text-black">
-          Contact Us
-        </h2>}
+        {!isMsgSent && (
+          <h2 className="text-3xl font-bold text-center mb-6 text-black">
+            Contact Us
+          </h2>
+        )}
 
         {!isMsgSent ? (
           <form ref={form} onSubmit={sendEmail} className="space-y-6">
