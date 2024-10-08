@@ -40,7 +40,7 @@ function NumberofPersons({ onAdultsChange, onKidsChange }) {
             name="kids-under-5"
             min="0"
             onChange={handleKidsChange} // Trigger on change
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
           />
         </div>
       </div>
