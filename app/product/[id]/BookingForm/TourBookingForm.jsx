@@ -38,15 +38,17 @@ export const TourBookingForm = ({ tour }) => {
   const sendEmail = (e) => {
     const formData = {
       email: form.current.email.value,
+      phone_number: form.current.phone_number.value,
+      tourName: tour.title,
       pickup_dropoff: form.current["pickup-dropoff"].value,
       pickup_date: form.current["pickup-date"].value,
       pickup_time: form.current["pickup-time"].value,
       pickup_location: form.current["pickup-location"].value,
-      adults: adults, // From state
-      kids: kids, // From state
+      adults: adults,
+      kids: kids,
       pay_online: isPayingOnline ? "Yes" : "No", // Pay online field
       price_per_person: pricePerPerson,
-      total_price: totalPrice, // From state
+      total_price: totalPrice,
     };
 
     emailjs
@@ -83,6 +85,29 @@ export const TourBookingForm = ({ tour }) => {
         setIsMsgSent(!isMsgSent);
       }}
     >
+      <div className="bg-gray-100 p-4 rounded-md mb-6 text-sm text-gray-800">
+        <p className="font-semibold text-gray-900">
+          Important Booking Information:
+        </p>
+        <ul className="list-disc ml-5 mt-3 space-y-2">
+          <li>
+            <strong>Chartered/Private Taxi:</strong> Minimum booking cost for
+            1-4 persons is four times the per-person rate.
+          </li>
+          <li>
+            <strong>One Tour/Transfer Per Booking:</strong> Please book one tour
+            or transfer at a time as each has a unique start time and date.
+          </li>
+          <li>
+            <strong>Hotel Pickup/Drop-off:</strong> For guests staying at a
+            hotel or resort, the pickup and drop-off point is the main lobby.
+          </li>
+          <li>
+            <strong>Children Under 5:</strong> Travel free with an accompanying
+            adult.
+          </li>
+        </ul>
+      </div>
       <h2 className="text-3xl font-bold text-center mb-6 text-emerald-600">
         Booking Form
       </h2>
@@ -108,7 +133,21 @@ export const TourBookingForm = ({ tour }) => {
           className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
       </div>
-
+      <div className="mb-2">
+        <label
+          htmlFor="phone_number"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Phone Number:
+        </label>
+        <input
+          type="text"
+          id="phone_number"
+          name="phone_number"
+          required
+          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
+        />
+      </div>
       <div className="flex items-center mb-4">
         <input
           type="checkbox"
