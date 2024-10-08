@@ -1478,6 +1478,9 @@ export const products = {
     },
   ],
 };
+export function getAllProducts() {
+  return products.products;
+}
 export function getProductByCategory(category) {
   products.products.filter((product) => {
     return product.category === category;
