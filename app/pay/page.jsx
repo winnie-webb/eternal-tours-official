@@ -1,9 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-import PayPalButton from "../components/PaypalBtn";
-import "./iframe.css";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 const PaymentComponent = () => {
@@ -21,33 +18,45 @@ const PaymentComponent = () => {
     <section className="min-h-[100vh] p-4 md:p-10 bg-gray-50">
       <h1 className="text-3xl mb-10 text-center">
         {queryAmount
-          ? `The total price of your booking is $${amount} usd`
-          : "Make a payment"}
+          ? `The total price of your booking is $${amount} USD`
+          : "Make a Payment"}
       </h1>
-      <input
-        type="number"
-        placeholder="Payment Amount"
-        className="p-2 shadow-md w-[90%] md:w-[30%] mx-auto block mb-10"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <div className="md:w-[30%] mx-auto">
-        <PayPalButton amount={parseFloat(amount)} />
+      <div className="space-y-8 text-lg">
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-emerald-600">
+            Zelle Direct Transfer
+          </h2>
+          <p>
+            Make your payment directly to our Zelle account:{" "}
+            <strong>eternaltours876@gmail.com</strong>. Please include your
+            order number in the transaction notes for reference.
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-emerald-600">
+            Pay by Cash on Arrival
+          </h2>
+          <p>
+            Prefer to pay later? No problem! You can choose to pay in cash when
+            you arrive for your service.
+          </p>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-emerald-600">
+            Card Payment on Arrival (Coming Soon)
+          </h2>
+          <p>
+            We are working on enabling card payments upon arrival. This feature
+            will be available soon, so stay tuned!
+          </p>
+        </div>
       </div>
     </section>
   );
 };
 
 const PaymentPage = () => {
-  return (
-    <PayPalScriptProvider
-      options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_API_KEY }}
-    >
-      <Suspense fallback={<div>Loading...</div>}>
-        <PaymentComponent />
-      </Suspense>
-    </PayPalScriptProvider>
-  );
+  return <PaymentComponent />;
 };
 
 export default PaymentPage;
