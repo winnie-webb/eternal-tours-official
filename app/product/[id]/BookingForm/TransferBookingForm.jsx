@@ -69,7 +69,7 @@ export const TransferBookingForm = ({ tour }) => {
     const formData = {
       tourName: tour.title,
       email: form.current.email.value,
-      phone: form.current.phone_number.value,
+      phone_number: form.current.phone_number.value,
       pickup_dropoff: transferDetails.pickupDropoff,
       pickup_date: transferDetails.arrivalDate,
       pickup_time: transferDetails.pickupTime,
