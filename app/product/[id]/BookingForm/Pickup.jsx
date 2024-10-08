@@ -26,7 +26,7 @@ function Pickup({ tour, setPricePerPerson }) {
               setPricePerPerson(currentPrice.toFixed(2));
             }
           }}
-          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         >
           <option value="0">Choose pick up &amp; drop off</option>
           {tourPickupKeys.map((pickup, index) => {
@@ -81,7 +81,7 @@ function Pickup({ tour, setPricePerPerson }) {
           id="pickup-date"
           name="pickup-date"
           required
-          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
       </div>
 
@@ -97,7 +97,7 @@ function Pickup({ tour, setPricePerPerson }) {
           id="pickup-time"
           name="pickup-time"
           required
-          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
       </div>
 
@@ -114,7 +114,7 @@ function Pickup({ tour, setPricePerPerson }) {
           id="pickup-location"
           name="pickup-location"
           required
-          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
       </div>
     </>
