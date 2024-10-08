@@ -4,7 +4,7 @@ import React from "react";
 
 function Hero() {
   return (
-    <section className="h-[50vh] xl:h-[80vh] bg-fixed overflow-hidden bg-[url('/local/hero-5.jpg')] relative bg-cover bg-center bg-no-repeat">
+    <section className="h-[50vh] xl:h-[80vh] overflow-hidden bg-[url('/local/hero-5.jpg')] relative bg-cover bg-center bg-no-repeat">
       {/* Background Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#0000009d] to-[#0000006c] z-0"></div>
 
