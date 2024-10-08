@@ -11,10 +11,9 @@ const Category = ({ title, description = "", data, itemsPerPage = 4 }) => {
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   // Slice the data array to show only the items for the current page
-  const paginatedData = data.sort((a,b)=>a.priceLowest-b.priceLowest).slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedData = data
+    .sort((a, b) => a.priceLowest - b.priceLowest)
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // Change page
   const changePage = (pageNumber) => {
@@ -40,7 +39,9 @@ const Category = ({ title, description = "", data, itemsPerPage = 4 }) => {
             <div className="relative h-64 w-full overflow-hidden ">
               <Image
                 className="object-fill object-center"
-                src={`/${tour.id.split("-").shift()}/${tour.id}.webp`}
+                src={`/${tour.id.split("-").shift()}/${tour.id}.${
+                  tour.imageExtension
+                }`}
                 alt={tour.title}
                 fill={true}
               />

@@ -10,6 +10,7 @@ export const products = {
       category: "at",
       "All Resorts In Kingston Area Price": "75",
       "All Villas/AirBnbs in Kingston Price": "75",
+      imageExtension: "webp",
     },
     {
       id: "at-2",
@@ -23,6 +24,7 @@ export const products = {
       "All Villas/AirBnbs in Mandeville Price": "50",
       "All Resorts In Port Antonio Area Price": "90",
       "All Villas/AirBnbs in Port Antonio Price": "90",
+      imageExtension: "webp",
     },
     {
       id: "at-3",
@@ -34,6 +36,7 @@ export const products = {
       category: "at",
       "All Resorts In Treasure Beach Price": "40",
       "All Villas/AirBnbs in Treasure Beach Price": "40",
+      imageExtension: "webp",
     },
     {
       id: "at-4",
@@ -44,6 +47,7 @@ export const products = {
       priceHighest: "50.00",
       "Sandals White House": "25",
       category: "at",
+      imageExtension: "webp",
     },
     {
       id: "at-5",
@@ -61,6 +65,7 @@ export const products = {
       "Moon Palace Jamaica Grande Price": "27",
       "Riu Ocho Rios Price": "27",
       "Sandals Ocho Rios Price": "28",
+      imageExtension: "webp",
     },
     {
       id: "at-6",
@@ -81,6 +86,7 @@ export const products = {
       "Royalton Negril Resort & Spa Price": "22",
       "Sunset at the Palms Resort Price": "22",
       category: "at",
+      imageExtension: "webp",
     },
     {
       id: "at-7",
@@ -100,6 +106,7 @@ export const products = {
       "Runaway Bay ( St. Ann ) Price": "50",
       "Treasure Beach ( St. Elizabeth ) Price": "70",
       category: "at",
+      imageExtension: "webp",
     },
     {
       id: "at-8",
@@ -116,6 +123,7 @@ export const products = {
       "Jewel Paradise Cove Resort & Spa Price": "20",
       "Jewel Runaway Beach & Gulf Resort Price": "20",
       "Royal Decameron Club Caribbean Price": "20",
+      imageExtension: "webp",
     },
     {
       id: "at-9",
@@ -128,6 +136,7 @@ export const products = {
       "All Other Resorts in Runaway Bay Price": "16",
       "All Villas/Airbnbs/Homes in Runaway Bay Price": "16",
       "Melia Braco": "16",
+      imageExtension: "webp",
     },
     {
       id: "at-10",
@@ -140,6 +149,7 @@ export const products = {
       "All Villas/Airbnbs/Homes in Lucea Price": "15",
       "Grand Palladium & Lady Hamilton, Lucea": "15",
       category: "at",
+      imageExtension: "webp",
     },
     {
       id: "at-11",
@@ -155,6 +165,7 @@ export const products = {
       "Ocean Coral Springs and Eden Bay by H10 Hotels Price": "17",
       "RIU Aquarelle Price": "16",
       "Royalton White Sands & Blue Water Price": "15",
+      imageExtension: "webp",
     },
     {
       id: "at-12",
@@ -183,8 +194,8 @@ export const products = {
       "Sunscape Splash & Cove, Montego Bay Price": "9",
       "The Tryall Club, Sandy Bay Price": "15",
       "Zoetry, Montego Bay Price": "7",
+      imageExtension: "webp",
     },
-
     {
       id: "mpt-1",
       title: "Scotchies Jerk Centre, Montego Bay",
@@ -198,6 +209,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-2",
@@ -212,6 +224,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-3",
@@ -229,6 +242,7 @@ export const products = {
       priceSecrets: "15",
       priceSunset: "15",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-4",
@@ -246,6 +260,7 @@ export const products = {
       pricePortAntonio: "60",
       priceRunaway: "25",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-5",
@@ -265,6 +280,7 @@ export const products = {
       priceRunaway: "45",
       priceTreasureBeach: "55",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-6",
@@ -283,6 +299,7 @@ export const products = {
       priceRunaway: "60",
       priceTreasureBeach: "50",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-7",
@@ -297,6 +314,7 @@ export const products = {
       priceOchi: "30",
       priceRunaway: "30",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-8",
@@ -312,6 +330,7 @@ export const products = {
       priceOchi: "25",
       priceRunaway: "35",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-9",
@@ -327,6 +346,7 @@ export const products = {
       priceOchi: "45",
       priceRunaway: "40",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-10",
@@ -341,6 +361,7 @@ export const products = {
       priceOchi: "25",
       priceRunaway: "30",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-11",
@@ -355,6 +376,7 @@ export const products = {
       priceOchi: "25",
       priceRunaway: "30",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-12",
@@ -369,6 +391,7 @@ export const products = {
       priceOchi: "30",
       priceRunaway: "30",
       category: "mpt",
+      imageExtension: "webp",
     },
     {
       id: "mpt-13",
@@ -384,8 +407,8 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "mpt",
+      imageExtension: "webp",
     },
-
     {
       id: "ctp-1",
       title: "Pelican Bar, Black River Safari & Ys Falls Combo Tour Package",
@@ -399,6 +422,7 @@ export const products = {
       priceOchi: "90",
       priceRunaway: "80",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-2",
@@ -414,6 +438,7 @@ export const products = {
       priceOchi: "95",
       priceRunaway: "85",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-3",
@@ -428,6 +453,7 @@ export const products = {
       priceOchi: "90",
       priceRunaway: "80",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-4",
@@ -443,6 +469,7 @@ export const products = {
       priceOchi: "95",
       priceRunaway: "85",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-5",
@@ -457,6 +484,7 @@ export const products = {
       priceOchi: "80",
       priceRunaway: "70",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-6",
@@ -471,6 +499,7 @@ export const products = {
       priceOchi: "90",
       priceRunaway: "80",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-7",
@@ -485,6 +514,7 @@ export const products = {
       priceOchi: "90",
       priceRunaway: "80",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-8",
@@ -499,6 +529,7 @@ export const products = {
       priceOchi: "90",
       priceRunaway: "80",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-9",
@@ -513,6 +544,7 @@ export const products = {
       priceOchi: "90",
       priceRunaway: "80",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-10",
@@ -528,6 +560,7 @@ export const products = {
       priceOchi: "60",
       priceRunaway: "55",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-11",
@@ -542,6 +575,7 @@ export const products = {
       priceOchi: "50",
       priceRunaway: "50",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-12",
@@ -556,6 +590,7 @@ export const products = {
       priceOchi: "45",
       priceRunaway: "50",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-13",
@@ -572,6 +607,7 @@ export const products = {
       priceOchi: "55",
       priceRunaway: "55",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-14",
@@ -587,6 +623,7 @@ export const products = {
       priceOchi: "45",
       priceRunaway: "50",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-15",
@@ -601,6 +638,7 @@ export const products = {
       priceOchi: "80",
       priceRunaway: "70",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-16",
@@ -615,6 +653,7 @@ export const products = {
       priceNegril: "60",
       priceOchi: "75",
       priceRunaway: "50",
+      imageExtension: "webp",
     },
     {
       id: "ctp-17",
@@ -630,6 +669,7 @@ export const products = {
       priceNegril: "60",
       priceOchi: "40",
       priceRunaway: "35",
+      imageExtension: "webp",
     },
     {
       id: "ctp-18",
@@ -644,6 +684,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-19",
@@ -658,6 +699,7 @@ export const products = {
       priceNegril: "75",
       priceOchi: "45",
       priceRunaway: "50",
+      imageExtension: "webp",
     },
     {
       id: "ctp-20",
@@ -673,6 +715,7 @@ export const products = {
       priceNegril: "60",
       priceOchi: "75",
       priceRunaway: "50",
+      imageExtension: "webp",
     },
     {
       id: "ctp-21",
@@ -688,6 +731,7 @@ export const products = {
       priceOchi: "60",
       priceRunaway: "55",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-22",
@@ -702,6 +746,7 @@ export const products = {
       priceOchi: "30",
       priceRunaway: "24",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-23",
@@ -712,6 +757,7 @@ export const products = {
       priceLucea: "30",
       priceNegril: "15",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-24",
@@ -726,6 +772,7 @@ export const products = {
       priceOchi: "45",
       priceRunaway: "50",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "ctp-25",
@@ -740,6 +787,7 @@ export const products = {
       priceOchi: "72.50",
       priceRunaway: "65",
       category: "ctp",
+      imageExtension: "webp",
     },
     {
       id: "abc-1",
@@ -755,6 +803,7 @@ export const products = {
       priceOchi: "45",
       priceRunaway: "40",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-2",
@@ -770,6 +819,7 @@ export const products = {
       priceOchi: "25",
       priceRunaway: "35",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-3",
@@ -781,6 +831,7 @@ export const products = {
       priceMobay: "20",
       priceNegril: "30",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-4",
@@ -795,6 +846,7 @@ export const products = {
       priceOchi: "50",
       priceRunaway: "50",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-5",
@@ -813,6 +865,7 @@ export const products = {
       priceRunaway: "45",
       priceTreasureBeach: "55",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-6",
@@ -827,6 +880,7 @@ export const products = {
       priceOchi: "20",
       priceRunaway: "35",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-7",
@@ -842,6 +896,7 @@ export const products = {
       priceOchi: "70",
       priceRunaway: "57.50",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-8",
@@ -857,6 +912,7 @@ export const products = {
       priceOchi: "60",
       priceRunaway: "55",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-9",
@@ -871,6 +927,7 @@ export const products = {
       priceOchi: "30",
       priceRunaway: "24",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-10",
@@ -885,6 +942,7 @@ export const products = {
       priceOchi: "20",
       priceRunaway: "20",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-11",
@@ -898,6 +956,7 @@ export const products = {
       priceOchi: "75",
       priceRunaway: "62.50",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-12",
@@ -911,6 +970,7 @@ export const products = {
       priceOchi: "75",
       priceRunaway: "62.50",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-13",
@@ -925,6 +985,7 @@ export const products = {
       priceOchi: "25",
       priceRunaway: "30",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-14",
@@ -939,6 +1000,7 @@ export const products = {
       priceOchi: "25",
       priceRunaway: "20",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-15",
@@ -953,6 +1015,7 @@ export const products = {
       priceOchi: "55",
       priceRunaway: "50",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-16",
@@ -965,6 +1028,7 @@ export const products = {
       priceMobay: "20",
       priceNegril: "40",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-17",
@@ -979,6 +1043,7 @@ export const products = {
       priceOchi: "25",
       priceRunaway: "15",
       category: "abc",
+      imageExtension: "webp",
     },
     {
       id: "abc-18",
@@ -993,8 +1058,8 @@ export const products = {
       priceOchi: "30",
       priceRunaway: "20",
       category: "abc",
+      imageExtension: "webp",
     },
-
     {
       id: "cse-1",
       title: "Coral Cliff Gaming Lounge Hip Strip Montego Bay",
@@ -1008,6 +1073,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-2",
@@ -1022,6 +1088,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-3",
@@ -1036,6 +1103,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-4",
@@ -1050,6 +1118,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-5",
@@ -1065,6 +1134,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-6",
@@ -1079,6 +1149,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-7",
@@ -1093,6 +1164,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-8",
@@ -1108,6 +1180,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-9",
@@ -1122,6 +1195,7 @@ export const products = {
       priceNegril: "30",
       priceOchi: "35",
       priceRunaway: "30",
+      imageExtension: "webp",
     },
     {
       id: "cse-10",
@@ -1136,6 +1210,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "cse",
+      imageExtension: "webp",
     },
     {
       id: "cse-11",
@@ -1150,8 +1225,8 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "edt",
+      imageExtension: "webp",
     },
-
     {
       id: "mpt-1",
       title: "Scotchies Jerk Centre, Montego Bay",
@@ -1165,6 +1240,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-2",
@@ -1178,6 +1254,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-3",
@@ -1192,6 +1269,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-4",
@@ -1206,6 +1284,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-5",
@@ -1221,6 +1300,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-6",
@@ -1235,6 +1315,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-7",
@@ -1249,6 +1330,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-8",
@@ -1264,6 +1346,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-9",
@@ -1278,6 +1361,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-10",
@@ -1292,6 +1376,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "cse-11",
@@ -1306,6 +1391,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "edt",
+      imageExtension: "webp",
     },
     {
       id: "egt-1",
@@ -1320,6 +1406,7 @@ export const products = {
       priceOchi: "65",
       priceRunaway: "60",
       category: "egt",
+      imageExtension: "webp",
     },
     {
       id: "egt-2",
@@ -1334,6 +1421,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "egt",
+      imageExtension: "webp",
     },
     {
       id: "egt-3",
@@ -1348,6 +1436,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "egt",
+      imageExtension: "webp",
     },
     {
       id: "egt-4",
@@ -1362,8 +1451,8 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "egt",
+      imageExtension: "webp",
     },
-
     {
       id: "cse-8",
       title:
@@ -1378,6 +1467,7 @@ export const products = {
       priceOchi: "35",
       priceRunaway: "30",
       category: "ncb",
+      imageExtension: "webp",
     },
     {
       id: "cse-2",
@@ -1392,6 +1482,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "ncb",
+      imageExtension: "webp",
     },
     {
       id: "cse-1",
@@ -1406,6 +1497,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "ncb",
+      imageExtension: "webp",
     },
     {
       id: "cse-11",
@@ -1420,6 +1512,7 @@ export const products = {
       priceOchi: "40",
       priceRunaway: "35",
       category: "ncb",
+      imageExtension: "webp",
     },
     {
       id: "st-1",
@@ -1431,6 +1524,7 @@ export const products = {
       priceLucea: "30",
       priceMobay: "20",
       category: "st",
+      imageExtension: "webp",
     },
     {
       id: "st-2",
@@ -1442,6 +1536,7 @@ export const products = {
       priceLucea: "30",
       priceMobay: "20",
       category: "st",
+      imageExtension: "webp",
     },
     {
       id: "st-3",
@@ -1453,6 +1548,7 @@ export const products = {
       priceMobay: "20",
       priceNegril: "15",
       category: "st",
+      imageExtension: "webp",
     },
     {
       id: "st-4",
@@ -1464,6 +1560,7 @@ export const products = {
       priceOchi: "15",
       priceRunaway: "20",
       category: "st",
+      imageExtension: "webp",
     },
     {
       id: "st-5",
@@ -1475,6 +1572,7 @@ export const products = {
       priceMobay: "10",
       priceNegril: "15",
       category: "st",
+      imageExtension: "webp",
     },
   ],
 };
