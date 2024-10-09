@@ -203,7 +203,7 @@ export const TransferBookingForm = ({ tour }) => {
           <option value="">Choose Place of Stay</option>
           {tourPlaceKeys.map((option) => (
             <option key={option} value={option}>
-              {option}
+              {option.replace("Price", "")}
             </option>
           ))}
         </select>
