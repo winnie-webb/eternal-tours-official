@@ -8,9 +8,8 @@ function BookingSuccessMsg() {
         Booking Confirmed!
       </h1>
       <p className="text-gray-600 text-lg text-center max-w-md">
-        Thank you! We’ve successfully received your details and will contact you
-        immediately with a detailed quote. If you have any questions, feel free
-        to reach out to us on our socials.
+        Thank you! We’ve successfully received your details. If you have any
+        questions, feel free to reach out to us on our socials.
       </p>
       <button
         className="mt-6 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300"
