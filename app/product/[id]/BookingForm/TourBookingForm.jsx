@@ -135,6 +135,21 @@ export const TourBookingForm = ({ tour }) => {
       </div>
       <div className="mb-2">
         <label
+          htmlFor="name"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Your Name:
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
+        />
+      </div>
+      <div className="mb-2">
+        <label
           htmlFor="phone_number"
           className="block text-gray-700 font-semibold mb-2"
         >
