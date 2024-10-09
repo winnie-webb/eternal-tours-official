@@ -15,6 +15,7 @@ export const TransferBookingForm = ({ tour }) => {
   const [isMsgSent, setIsMsgSent] = useState(false);
   const [isPayingOnline, setIsPayingOnline] = useState(false);
   const [pricePerPerson, setPricePerPerson] = useState(0);
+  const transferTypeRef = useRef();
   const [transferDetails, setTransferDetails] = useState({
     transferType: "",
     placeOfStay: "",
@@ -152,6 +153,7 @@ export const TransferBookingForm = ({ tour }) => {
         </label>
         <select
           name="transferType"
+          ref={transferTypeRef}
           onChange={(e) => {
             handleTransferDetailsChange(e.target.name, e.target.value);
             const placeOfStayValue = placeOfStay.current.value;
@@ -189,7 +191,11 @@ export const TransferBookingForm = ({ tour }) => {
             handleTransferDetailsChange(e.target.name, e.target.value);
             const currentPrice = parseInt(tour[e.target.value], 10);
             if (!isNaN(currentPrice)) {
-              setPricePerPerson(currentPrice.toFixed(2));
+              if (transferTypeRef.current.value === "PickUpAndDropOff") {
+                setPricePerPerson(currentPrice * 2);
+              } else {
+                setPricePerPerson(currentPrice);
+              }
             }
           }}
           className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
@@ -390,6 +396,21 @@ export const TransferBookingForm = ({ tour }) => {
           type="text"
           id="phone_number"
           name="phone_number"
+          required
+          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
+        />
+      </div>
+      <div className="mb-2">
+        <label
+          htmlFor="name"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Your Name:
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
           required
           className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
