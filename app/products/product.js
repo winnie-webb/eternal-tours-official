@@ -1,4 +1,4 @@
-import products from "../../public/data/products.json";
+import products from "../data/products.json";
 export { products };
 export function getAllProducts() {
   return products;
