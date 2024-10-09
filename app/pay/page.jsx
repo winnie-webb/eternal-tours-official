@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 const PaymentComponent = () => {
@@ -56,7 +56,11 @@ const PaymentComponent = () => {
 };
 
 const PaymentPage = () => {
-  return <PaymentComponent />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentComponent />
+    </Suspense>
+  );
 };
 
 export default PaymentPage;
