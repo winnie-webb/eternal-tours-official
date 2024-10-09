@@ -4,7 +4,7 @@ import Link from "next/link";
 import React from "react";
 import BookingForm from "./BookingForm/BookingForm";
 export function generateStaticParams() {
-  return products.products.map((product) => ({
+  return products.map((product) => ({
     id: product.id, // Correctly returning the id in an object
   }));
 }
