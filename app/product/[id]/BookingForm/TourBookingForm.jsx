@@ -37,6 +37,8 @@ export const TourBookingForm = ({ tour }) => {
 
   const sendEmail = (e) => {
     const formData = {
+      to_email:
+        "eternaltours876@gmail.com, sherine.downie@yahoo.com, desmondbrown327@gmail.com",
       email: form.current.email.value,
       phone_number: form.current.phone_number.value,
       tourName: tour.title,
@@ -49,6 +51,7 @@ export const TourBookingForm = ({ tour }) => {
       pay_online: isPayingOnline ? "Yes" : "No", // Pay online field
       price_per_person: pricePerPerson,
       total_price: totalPrice,
+      reply_to: form.current.email.value,
     };
 
     emailjs
