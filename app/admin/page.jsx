@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import getTitleFromType from "../category/getTitleFromType";
 import { getAllProducts } from "../products/product";
 import GalleryUpload from "./UploadGallery";
+import { auth } from "@/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const AdminPanel = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const products = getAllProducts();
   const [productList, setProductList] = useState(products);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -19,13 +19,14 @@ const AdminPanel = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const adminUserName = localStorage.getItem("admin");
-    const isAdmin = adminUserName === process.env.NEXT_PUBLIC_ADMIN_USER;
-    if (!isAdmin) {
-      router.push("/login");
-    } else {
-      setIsLoggedIn(true);
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/login"); // Redirect to login page if not authenticated
+      }
+    });
+
+    // Cleanup the subscription
+    return () => unsubscribe();
   }, [router]);
 
   const handleEditProduct = (product) => {
@@ -97,8 +98,6 @@ const AdminPanel = () => {
       });
     }
   };
-
-  if (!isLoggedIn) return null;
 
   return (
     <div className="p-6 bg-gray-100">
