@@ -1,10 +1,18 @@
 "use client";
 import React, { useRef, useState, useEffect, useCallback } from "react";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import Pickup from "./Pickup";
 import NumberofPersons from "./NumberofPersons";
 import emailjs from "@emailjs/browser";
 import BookingSuccessMsg from "./BookingSuccessMsg";
 import { useRouter } from "next/navigation";
+import { db } from "@/firebase";
+
 export const TourBookingForm = ({ tour }) => {
   const form = useRef();
   const [totalPrice, setTotalPrice] = useState(0);
@@ -13,7 +21,14 @@ export const TourBookingForm = ({ tour }) => {
   const [isMsgSent, setIsMsgSent] = useState(false);
   const [isPayingOnline, setIsPayingOnline] = useState(false);
   const [pricePerPerson, setPricePerPerson] = useState(0);
+  const [orderNumber, setOrderNumber] = useState("");
   const router = useRouter();
+
+  // Function to generate order number
+  const generateOrderNumber = () => {
+    return `ET-${Math.floor(100000 + Math.random() * 900000)}`; // Generate a random 6-digit order number prefixed with "ET"
+  };
+
   const calculateTotalPrice = useCallback(() => {
     const total = adults * pricePerPerson;
     if (adults <= 4 && adults !== 0) {
@@ -35,12 +50,13 @@ export const TourBookingForm = ({ tour }) => {
     setKids(value);
   };
 
-  const sendEmail = (e) => {
+  const sendEmail = async (e) => {
     const formData = {
       to_email:
         "eternaltours876@gmail.com, sherine.downie@yahoo.com, desmondbrown327@gmail.com",
       email: form.current.email.value,
       phone_number: form.current.phone_number.value,
+      name: form.current.name.value,
       tourName: tour.title,
       pickup_dropoff: form.current["pickup-dropoff"].value,
       pickup_date: form.current["pickup-date"].value,
@@ -54,24 +70,41 @@ export const TourBookingForm = ({ tour }) => {
       reply_to: form.current.email.value,
     };
 
-    emailjs
-      .send(
+    try {
+      // Send email using EmailJS
+      await emailjs.send(
         "service_b3u5zxa",
         "template_rrfkk4m",
-        formData, // Use the manually created form data
+        formData,
         "nxC4W-fiaC4DvJpPJ"
-      )
-      .then(
-        () => {
-          // setIsMsgSent(true);
-        },
-        (error) => {
-          console.log("FAILED...", error.text);
-          alert(
-            "Error sending email. Please try to dm us on Facebook messenger, Instagram, or Whatsapp"
-          );
-        }
       );
+
+      // Create booking in Firebase
+      const orderNum = generateOrderNumber();
+      setOrderNumber(orderNum);
+
+      // Save the booking details to Firebase
+      await addDoc(collection(db, "bookings"), {
+        ...formData,
+        orderNumber: orderNum,
+        timestamp: serverTimestamp(), // Add timestamp for when the booking was made
+        status: "pending", // Initial booking status
+      });
+      const bookingsCollection = collection(db, "bookings");
+      onSnapshot(bookingsCollection, (snapshot) => {
+        // Play notification sound if a new booking is added
+        if (snapshot.docChanges().some((change) => change.type === "added")) {
+          const notificationSound = new Audio("/notification-sound.mp3");
+          notificationSound.play();
+        }
+      });
+      setIsMsgSent(true);
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      alert(
+        "Error sending booking or email. Please try again or contact support."
+      );
+    }
   };
 
   return !isMsgSent ? (
@@ -85,7 +118,6 @@ export const TourBookingForm = ({ tour }) => {
         if (isPayingOnline) {
           return router.push(`/pay?payment=${totalPrice}`);
         }
-        setIsMsgSent(!isMsgSent);
       }}
     >
       <div className="bg-gray-100 p-4 rounded-md mb-6 text-sm text-gray-800">
@@ -111,6 +143,7 @@ export const TourBookingForm = ({ tour }) => {
           </li>
         </ul>
       </div>
+
       <h2 className="text-3xl font-bold text-center mb-6 text-emerald-600">
         Booking Form
       </h2>
@@ -166,6 +199,7 @@ export const TourBookingForm = ({ tour }) => {
           className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
       </div>
+
       <div className="flex items-center mb-4">
         <input
           type="checkbox"
@@ -183,6 +217,7 @@ export const TourBookingForm = ({ tour }) => {
       <p className="text-gray-600 text-sm mb-4">
         (If you want to pay when you arrive, please leave the box unchecked)
       </p>
+
       <div className="text-lg mb-4">
         <p>
           Price Per Person: $
@@ -193,7 +228,7 @@ export const TourBookingForm = ({ tour }) => {
         <p>
           Total Price: $
           <span id="total-price" className="font-semibold">
-            {totalPrice}{" "}
+            {totalPrice}
           </span>
         </p>
       </div>
@@ -207,6 +242,11 @@ export const TourBookingForm = ({ tour }) => {
       </button>
     </form>
   ) : (
-    <BookingSuccessMsg isMsgSent={isMsgSent}></BookingSuccessMsg>
+    <div>
+      <BookingSuccessMsg isMsgSent={isMsgSent} />
+      <p>
+        Your order number is: <strong>{orderNumber}</strong>
+      </p>
+    </div>
   );
 };
