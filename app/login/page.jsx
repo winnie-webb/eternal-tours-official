@@ -1,22 +1,26 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (
-      username === process.env.NEXT_PUBLIC_ADMIN_USER &&
-      password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD
-    ) {
-      localStorage.setItem("admin", username);
-      window.location.href = "/admin"; // Redirect to admin page after login
-    } else {
-      setError("Invalid credentials. Please try again.");
-    }
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        // Redirect to admin page after login
+        router.push("/admin");
+      })
+      .catch((error) => {
+        // Handle login errors
+        setError("Invalid email or password. Please try again.");
+      });
   };
 
   return (
@@ -28,11 +32,12 @@ const Login = () => {
         <h1 className="text-2xl font-bold mb-4">Admin Login</h1>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <input
-          type="text"
-          placeholder="Username"
+          type="email"
+          placeholder="Email"
           className="block w-full mb-4 p-2 border rounded"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
@@ -40,6 +45,7 @@ const Login = () => {
           className="block w-full mb-4 p-2 border rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button
           type="submit"
