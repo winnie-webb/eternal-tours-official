@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import getTitleFromType from "../category/getTitleFromType";
 import { getAllProducts } from "../products/product";
+import GalleryUpload from "./UploadGallery";
 
 const AdminPanel = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -102,6 +103,8 @@ const AdminPanel = () => {
   return (
     <div className="p-6 bg-gray-100">
       <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
+
+      {/* Products Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {productList.map((product, index) => (
           <div
@@ -162,51 +165,51 @@ const AdminPanel = () => {
       )}
 
       {/* New Product Creation */}
-      {
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold">Create New Product</h2>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="border p-2 rounded-md mb-4"
-          >
-            <option value="mpt">Most Popular Tours</option>
-            <option value="at">Airport Transfers</option>
-            <option value="cse">Cruise Shore Excursions</option>
-            <option value="ctp">Combo Tour Packages</option>
-            <option value="egt">Exclusive Golf Tours</option>
-            <option value="st">Shopping Tours</option>
-            <option value="abc">Attractions / Beach / City Tours</option>
-            <option value="edt">Eating / Dining Tours</option>
-          </select>
-          <button
-            onClick={handleCreateProduct}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 mb-4 rounded-md"
-          >
-            Create New Product
-          </button>
+      <div className="mb-8">
+        <h2 className="text-2xl font-semibold">Create New Product</h2>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="border p-2 rounded-md mb-4"
+        >
+          <option value="mpt">Most Popular Tours</option>
+          <option value="at">Airport Transfers</option>
+          <option value="cse">Cruise Shore Excursions</option>
+          <option value="ctp">Combo Tour Packages</option>
+          <option value="egt">Exclusive Golf Tours</option>
+          <option value="st">Shopping Tours</option>
+          <option value="abc">Attractions / Beach / City Tours</option>
+          <option value="edt">Eating / Dining Tours</option>
+        </select>
+        <button
+          onClick={handleCreateProduct}
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 mb-4 rounded-md"
+        >
+          Create New Product
+        </button>
 
-          {newProduct && (
-            <>
-              <pre className="bg-gray-200 p-4 rounded-md">
-                {JSON.stringify(newProduct, null, 2)}
-              </pre>
-              <textarea
-                className="border p-2 rounded-md w-full h-40"
-                value={JSON.stringify(newProduct, null, 2)}
-                onChange={(e) => setNewProduct(JSON.parse(e.target.value))}
-              />
-              <input type="file" onChange={handleFileUpload} />
-              <button
-                onClick={handleSaveNewProduct}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 mt-4 rounded-md"
-              >
-                Save New Product
-              </button>
-            </>
-          )}
-        </div>
-      }
+        {newProduct && (
+          <>
+            <pre className="bg-gray-200 p-4 rounded-md">
+              {JSON.stringify(newProduct, null, 2)}
+            </pre>
+            <textarea
+              className="border p-2 rounded-md w-full h-40"
+              value={JSON.stringify(newProduct, null, 2)}
+              onChange={(e) => setNewProduct(JSON.parse(e.target.value))}
+            />
+            <input type="file" onChange={handleFileUpload} />
+            <button
+              onClick={handleSaveNewProduct}
+              className="bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 mt-4 rounded-md"
+            >
+              Save New Product
+            </button>
+          </>
+        )}
+      </div>
+
+      <GalleryUpload></GalleryUpload>
     </div>
   );
 };

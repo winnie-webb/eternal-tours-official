@@ -5,6 +5,7 @@ import Category from "./components/Category";
 import { filterProductByCategory } from "./products/product";
 import AboutUs from "./components/AboutUs";
 import { TripAdvisor } from "./components/TripAdvisor";
+import BtmGallery from "./components/BtmGallery";
 export default function Home() {
   return (
     <>
@@ -23,6 +24,7 @@ export default function Home() {
         itemsPerPage={3}
       ></Category>
       <AboutUs />
+      <BtmGallery></BtmGallery>
     </>
   );
 }
