@@ -5,6 +5,9 @@ import NumberofPersons from "./NumberofPersons";
 import emailjs from "@emailjs/browser";
 import BookingSuccessMsg from "./BookingSuccessMsg";
 import { useRouter } from "next/navigation";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/firebase";
+import sendNotificationToAdmin from "@/app/utils/sendNotificationToAdmin";
 
 export const TransferBookingForm = ({ tour }) => {
   const form = useRef();
@@ -15,7 +18,13 @@ export const TransferBookingForm = ({ tour }) => {
   const [isMsgSent, setIsMsgSent] = useState(false);
   const [isPayingOnline, setIsPayingOnline] = useState(false);
   const [pricePerPerson, setPricePerPerson] = useState(0);
+  const [userFormData, setUserFormData] = useState(null);
+  const [orderNumber, setOrderNumber] = useState("");
+
   const transferTypeRef = useRef();
+  const generateOrderNumber = () => {
+    return `ET-${Math.floor(100000 + Math.random() * 900000)}`; // Generate a random 6-digit order number prefixed with "ET"
+  };
   const [transferDetails, setTransferDetails] = useState({
     transferType: "",
     placeOfStay: "",
@@ -35,7 +44,6 @@ export const TransferBookingForm = ({ tour }) => {
       key !== "priceLowest" &&
       key !== "priceHighest"
   );
-  const router = useRouter();
 
   const calculateTotalPrice = useCallback(() => {
     const total = adults * pricePerPerson;
@@ -65,7 +73,7 @@ export const TransferBookingForm = ({ tour }) => {
     }));
   };
 
-  const sendEmail = (e) => {
+  const sendEmail = async (e) => {
     e.preventDefault();
     const formData = {
       tourName: tour.title,
@@ -87,28 +95,34 @@ export const TransferBookingForm = ({ tour }) => {
       price_per_person: pricePerPerson,
       total_price: totalPrice,
     };
-
-    emailjs
-      .send(
+    setUserFormData(formData);
+    try {
+      // Send email using EmailJS
+      await emailjs.send(
         "service_b3u5zxa",
         "template_7eif1gi",
         formData,
         "nxC4W-fiaC4DvJpPJ"
-      )
-      .then(
-        () => {
-          setIsMsgSent(true);
-        },
-        (error) => {
-          console.log("FAILED...", error.text);
-          alert(
-            "Error sending email. Please try to dm us on Facebook messenger, Instagram, or Whatsapp"
-          );
-        }
       );
 
-    if (isPayingOnline) {
-      return router.push(`/pay?payment=${totalPrice}`);
+      // Create booking in Firebase
+      const orderNum = generateOrderNumber();
+      setOrderNumber(orderNum);
+
+      // Save the booking details to Firebase
+      await addDoc(collection(db, "bookings"), {
+        ...formData,
+        orderNumber: orderNum,
+        timestamp: serverTimestamp(), // Add timestamp for when the booking was made
+        status: "pending", // Initial booking status
+      });
+      sendNotificationToAdmin();
+      setIsMsgSent(true);
+    } catch (error) {
+      console.error("Error creating booking:", error.message);
+      alert(
+        "Error sending booking or email. Please try again or contact support."
+      );
     }
   };
 
@@ -458,6 +472,10 @@ export const TransferBookingForm = ({ tour }) => {
       </div>
     </form>
   ) : (
-    <BookingSuccessMsg />
+    <BookingSuccessMsg
+      orderNumber={orderNumber}
+      formData={userFormData}
+      tour={tour}
+    />
   );
 };

@@ -23,7 +23,7 @@ export const TourBookingForm = ({ tour }) => {
   const [isPayingOnline, setIsPayingOnline] = useState(false);
   const [pricePerPerson, setPricePerPerson] = useState(0);
   const [orderNumber, setOrderNumber] = useState("");
-  const router = useRouter();
+  const [userFormData, setUserFormData] = useState(null);
   // Function to generate order number
   const generateOrderNumber = () => {
     return `ET-${Math.floor(100000 + Math.random() * 900000)}`; // Generate a random 6-digit order number prefixed with "ET"
@@ -52,7 +52,6 @@ export const TourBookingForm = ({ tour }) => {
 
   const sendEmail = async (e) => {
     const formData = {
-      to_email: "wbrownthe2nd@gmail.com, winstonbrown1516@gmail.com",
       email: form.current.email.value,
       phone_number: form.current.phone_number.value,
       name: form.current.name.value,
@@ -68,15 +67,15 @@ export const TourBookingForm = ({ tour }) => {
       total_price: totalPrice,
       reply_to: form.current.email.value,
     };
-
+    setUserFormData(formData);
     try {
       // Send email using EmailJS
-      // await emailjs.send(
-      //   "service_b3u5zxa",
-      //   "template_rrfkk4m",
-      //   formData,
-      //   "nxC4W-fiaC4DvJpPJ"
-      // );
+      await emailjs.send(
+        "service_b3u5zxa",
+        "template_rrfkk4m",
+        formData,
+        "nxC4W-fiaC4DvJpPJ"
+      );
 
       // Create booking in Firebase
       const orderNum = generateOrderNumber();
@@ -90,7 +89,7 @@ export const TourBookingForm = ({ tour }) => {
         status: "pending", // Initial booking status
       });
       sendNotificationToAdmin();
-      // setIsMsgSent(true);
+      setIsMsgSent(true);
     } catch (error) {
       console.error("Error creating booking:", error);
       alert(
@@ -107,9 +106,6 @@ export const TourBookingForm = ({ tour }) => {
       onSubmit={(e) => {
         e.preventDefault();
         sendEmail();
-        if (isPayingOnline) {
-          return router.push(`/pay?payment=${totalPrice}`);
-        }
       }}
     >
       <div className="bg-gray-100 p-4 rounded-md mb-6 text-sm text-gray-800">
@@ -235,10 +231,11 @@ export const TourBookingForm = ({ tour }) => {
     </form>
   ) : (
     <div>
-      <BookingSuccessMsg isMsgSent={isMsgSent} />
-      <p>
-        Your order number is: <strong>{orderNumber}</strong>
-      </p>
+      <BookingSuccessMsg
+        formData={userFormData}
+        orderNumber={orderNumber}
+        tour={tour}
+      />
     </div>
   );
 };
