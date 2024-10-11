@@ -1,6 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  collection,
+  arrayUnion,
+} from "firebase/firestore";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
@@ -18,27 +26,34 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let messaging;
-try {
-  if (typeof window !== "undefined") {
-    messaging = getMessaging(app);
-  }
-} catch (e) {
-  console.log("Service Worker issues");
+if (typeof window !== "undefined") {
+  messaging = getMessaging(app);
 }
 
-// Save admin token in Firestore
-export const saveAdminToken = async (token) => {
-  const adminRef = doc(db, "users", "AvUZdeyakW6hyU3TYi0H"); // Use your admin user ID
-  await setDoc(adminRef, { token: token }, { merge: true });
+export const saveAdminToken = async (user, token) => {
+  if (user && token) {
+    const adminRef = doc(db, "users", user.uid);
+    await setDoc(adminRef, { tokens: arrayUnion(token) }, { merge: true }); // Add the token without overwriting
+  }
 };
 
 // Retrieve admin token from Firestore
-export const getAdminToken = async () => {
-  const adminRef = doc(db, "users", "AvUZdeyakW6hyU3TYi0H"); // Use your admin user ID
-  const adminDoc = await getDoc(adminRef);
-  return adminDoc.exists() ? adminDoc.data().token : null;
+export const getAllAdminTokens = async () => {
+  const tokens = [];
+  const usersCollection = collection(db, "users");
+  const snapshot = await getDocs(usersCollection);
+
+  snapshot.forEach((doc) => {
+    const userData = doc.data();
+    if (userData.tokens && Array.isArray(userData.tokens)) {
+      tokens.push(...userData.tokens); // Spread the tokens to merge into a single array
+    }
+  });
+
+  return tokens;
 };
 
+// Register service worker and request notification permission
 export const registerServiceWorker = async () => {
   if (typeof window !== "undefined" && "serviceWorker" in navigator) {
     try {
@@ -60,23 +75,37 @@ export const registerServiceWorker = async () => {
 export const requestPermission = async () => {
   if (typeof window !== "undefined") {
     console.log("Requesting permission...");
-    try {
-      const registration = await registerServiceWorker();
-      const currentToken = await getToken(messaging, {
-        vapidKey: process.env.NEXT_PUBLIC_VAPID_KEY,
-        serviceWorkerRegistration: registration,
-      });
 
-      if (currentToken) {
-        await saveAdminToken(currentToken); // Save the token for the admin
-        return currentToken;
+    try {
+      // Step 1: Register the service worker
+      const registration = await registerServiceWorker();
+
+      // Step 2: Check and request notification permission
+      const permission = Notification.permission;
+      if (permission === "default") {
+        await Notification.requestPermission();
+      }
+
+      if (permission === "granted" || Notification.permission === "granted") {
+        console.log("Notification permission granted.");
+
+        // Step 3: Get FCM token
+        const currentToken = await getToken(messaging, {
+          vapidKey: process.env.NEXT_PUBLIC_VAPID_KEY,
+          serviceWorkerRegistration: registration,
+        });
+
+        if (currentToken) {
+          console.log("FCM Token retrieved:", currentToken);
+          return currentToken; // Return the token instead of logging undefined
+        } else {
+          console.warn("No registration token available.");
+        }
       } else {
-        console.warn(
-          "No registration token available. Request permission to generate one."
-        );
+        console.warn("Notification permission denied.");
       }
     } catch (error) {
-      console.error("An error occurred while retrieving token.", error);
+      console.error("Error retrieving token:", error);
     }
   }
 };

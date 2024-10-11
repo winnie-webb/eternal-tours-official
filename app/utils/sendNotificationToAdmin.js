@@ -1,29 +1,24 @@
-import { getAdminToken } from "@/firebase";
+import { getAllAdminTokens } from "@/firebase";
 
-// sendNotificationToAdmin.js
+// Function to send notifications to all admins
 const sendNotificationToAdmin = async () => {
   try {
+    const tokens = await getAllAdminTokens(); // Get all stored tokens
+
     const response = await fetch("/api/notify", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: "New booking Alert!!",
-        body: "Please check the admin panel",
-        token: await getAdminToken(), // Get the admin's FCM token from Firestore
+        title: "New Booking Alert!",
+        body: "Please check the admin panel.",
+        tokens: tokens, // Send to all tokens
       }),
     });
 
-    const data = await response.json();
-
-    if (data.success) {
-      console.log("Notification sent to admin:");
-    } else {
-      console.error("Failed to send notification:", data.error);
-    }
+    console.log("Notification response:", response);
   } catch (error) {
-    console.error("Error sending notification to admin:", error);
+    console.error("Error sending notifications:", error);
   }
 };
+
 export default sendNotificationToAdmin;

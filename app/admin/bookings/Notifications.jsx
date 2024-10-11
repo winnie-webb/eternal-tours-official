@@ -10,24 +10,10 @@ const Notifications = () => {
   useEffect(() => {
     const setupNotifications = async () => {
       await registerServiceWorker();
-      await requestPermission();
+      // await requestPermission();
     };
 
     setupNotifications();
-  }, []);
-  useEffect(() => {
-    if (messaging) {
-      onMessage(messaging, (payload) => {
-        console.log("Foreground message received: ", payload);
-        const { title, body } = payload.notification;
-
-        if (Notification.permission === "granted") {
-          new Notification(title, {
-            body: body,
-          });
-        }
-      });
-    }
   }, []);
 
   return <div>Notifications Setup</div>;

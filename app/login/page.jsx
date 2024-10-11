@@ -1,8 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  auth,
+  db,
+  registerServiceWorker,
+  requestPermission,
+  saveAdminToken,
+} from "@/firebase";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,16 +20,24 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        // Redirect to admin page after login
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+
+        // Create a new admin document for each login (with a unique ID)
+
+        // Register service worker and save the FCM token
+        await registerServiceWorker();
+        const token = await requestPermission();
+        await saveAdminToken(user, token); // Save the FCM token for notifications
+
+        // Redirect to the admin page after login
         router.push("/admin");
       })
       .catch((error) => {
-        // Handle login errors
         setError("Invalid email or password. Please try again.");
+        console.error(error.message);
       });
   };
-
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <form
