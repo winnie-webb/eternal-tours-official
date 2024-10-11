@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, doc, updateDoc, onSnapshot } from "firebase/firestore";
 import toast from "react-hot-toast";
-import { auth, db, messaging } from "@/firebase";
+import { auth, db, messaging, onMessage } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
