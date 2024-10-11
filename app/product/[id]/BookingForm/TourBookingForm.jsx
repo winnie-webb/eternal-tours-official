@@ -11,13 +11,7 @@ import NumberofPersons from "./NumberofPersons";
 import emailjs from "@emailjs/browser";
 import BookingSuccessMsg from "./BookingSuccessMsg";
 import { useRouter } from "next/navigation";
-import {
-  db,
-  messaging,
-  onMessage,
-  registerServiceWorker,
-  requestPermission,
-} from "@/firebase";
+import { db } from "@/firebase";
 import sendNotificationToAdmin from "@/app/utils/sendNotificationToAdmin";
 
 export const TourBookingForm = ({ tour }) => {
@@ -30,35 +24,10 @@ export const TourBookingForm = ({ tour }) => {
   const [pricePerPerson, setPricePerPerson] = useState(0);
   const [orderNumber, setOrderNumber] = useState("");
   const router = useRouter();
-  const [token, setToken] = useState(null);
   // Function to generate order number
   const generateOrderNumber = () => {
     return `ET-${Math.floor(100000 + Math.random() * 900000)}`; // Generate a random 6-digit order number prefixed with "ET"
   };
-  useEffect(() => {
-    const setupNotifications = async () => {
-      await registerServiceWorker();
-      const tokenGen = await requestPermission();
-      setToken(tokenGen);
-    };
-
-    setupNotifications();
-  }, []);
-  useEffect(() => {
-    if (messaging) {
-      onMessage(messaging, (payload) => {
-        console.log("Foreground message received: ", payload);
-        const { title, body } = payload.notification;
-
-        if (Notification.permission === "granted") {
-          new Notification(title, {
-            body: body,
-            icon: "/firebase-logo.png",
-          });
-        }
-      });
-    }
-  }, []);
 
   const calculateTotalPrice = useCallback(() => {
     const total = adults * pricePerPerson;
