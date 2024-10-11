@@ -11,7 +11,14 @@ import NumberofPersons from "./NumberofPersons";
 import emailjs from "@emailjs/browser";
 import BookingSuccessMsg from "./BookingSuccessMsg";
 import { useRouter } from "next/navigation";
-import { db } from "@/firebase";
+import {
+  db,
+  messaging,
+  onMessage,
+  registerServiceWorker,
+  requestPermission,
+} from "@/firebase";
+import sendNotificationToAdmin from "@/app/utils/sendNotificationToAdmin";
 
 export const TourBookingForm = ({ tour }) => {
   const form = useRef();
@@ -23,11 +30,35 @@ export const TourBookingForm = ({ tour }) => {
   const [pricePerPerson, setPricePerPerson] = useState(0);
   const [orderNumber, setOrderNumber] = useState("");
   const router = useRouter();
-
+  const [token, setToken] = useState(null);
   // Function to generate order number
   const generateOrderNumber = () => {
     return `ET-${Math.floor(100000 + Math.random() * 900000)}`; // Generate a random 6-digit order number prefixed with "ET"
   };
+  useEffect(() => {
+    const setupNotifications = async () => {
+      await registerServiceWorker();
+      const tokenGen = await requestPermission();
+      setToken(tokenGen);
+    };
+
+    setupNotifications();
+  }, []);
+  useEffect(() => {
+    if (messaging) {
+      onMessage(messaging, (payload) => {
+        console.log("Foreground message received: ", payload);
+        const { title, body } = payload.notification;
+
+        if (Notification.permission === "granted") {
+          new Notification(title, {
+            body: body,
+            icon: "/firebase-logo.png",
+          });
+        }
+      });
+    }
+  }, []);
 
   const calculateTotalPrice = useCallback(() => {
     const total = adults * pricePerPerson;
@@ -52,8 +83,7 @@ export const TourBookingForm = ({ tour }) => {
 
   const sendEmail = async (e) => {
     const formData = {
-      to_email:
-        "eternaltours876@gmail.com, sherine.downie@yahoo.com, desmondbrown327@gmail.com",
+      to_email: "wbrownthe2nd@gmail.com, winstonbrown1516@gmail.com",
       email: form.current.email.value,
       phone_number: form.current.phone_number.value,
       name: form.current.name.value,
@@ -72,12 +102,12 @@ export const TourBookingForm = ({ tour }) => {
 
     try {
       // Send email using EmailJS
-      await emailjs.send(
-        "service_b3u5zxa",
-        "template_rrfkk4m",
-        formData,
-        "nxC4W-fiaC4DvJpPJ"
-      );
+      // await emailjs.send(
+      //   "service_b3u5zxa",
+      //   "template_rrfkk4m",
+      //   formData,
+      //   "nxC4W-fiaC4DvJpPJ"
+      // );
 
       // Create booking in Firebase
       const orderNum = generateOrderNumber();
@@ -90,15 +120,8 @@ export const TourBookingForm = ({ tour }) => {
         timestamp: serverTimestamp(), // Add timestamp for when the booking was made
         status: "pending", // Initial booking status
       });
-      const bookingsCollection = collection(db, "bookings");
-      onSnapshot(bookingsCollection, (snapshot) => {
-        // Play notification sound if a new booking is added
-        if (snapshot.docChanges().some((change) => change.type === "added")) {
-          const notificationSound = new Audio("/notification-sound.mp3");
-          notificationSound.play();
-        }
-      });
-      setIsMsgSent(true);
+      sendNotificationToAdmin();
+      // setIsMsgSent(true);
     } catch (error) {
       console.error("Error creating booking:", error);
       alert(
