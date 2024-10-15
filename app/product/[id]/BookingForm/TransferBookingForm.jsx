@@ -449,12 +449,6 @@ export const TransferBookingForm = ({ tour }) => {
       </p>
       <div className="text-lg mb-2">
         <p>
-          Price Per Person: $
-          <span id="price-per-person" className="font-semibold">
-            {pricePerPerson}
-          </span>
-        </p>
-        <p>
           Total Price: $
           <span id="total-price" className="font-semibold">
             {totalPrice}{" "}
