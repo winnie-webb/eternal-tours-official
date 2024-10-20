@@ -14,7 +14,4 @@ The website for the premier bus tour agency in Jamaica, Jamaica Eternal Tours An
 - **Frontend**: Next.js, Tailwind CSS
 - **Backend**: Firebase Firestore for data storage
 
-### Installation and Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/booking-management.git
+
