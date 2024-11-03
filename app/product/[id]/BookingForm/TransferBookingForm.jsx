@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/firebase";
 import sendNotificationToAdmin from "@/app/utils/sendNotificationToAdmin";
+import BookingInfo from "./BookingInfo";
 
 export const TransferBookingForm = ({ tour }) => {
   const form = useRef();
@@ -133,35 +134,28 @@ export const TransferBookingForm = ({ tour }) => {
       className="max-w-3xl mx-auto bg-white p-6 shadow-lg rounded-lg mt-8"
       onSubmit={sendEmail}
     >
-      <div className="bg-gray-100 p-4 rounded-md mb-6 text-sm text-gray-800">
-        <p className="font-semibold text-gray-900">
-          Important Booking Information:
-        </p>
-        <ul className="list-disc ml-5 mt-3 space-y-2">
-          <li>
-            <strong>Chartered/Private Taxi:</strong> Minimum booking cost for
-            1-4 persons is four times the per-person rate.
-          </li>
-          <li>
-            <strong>One Tour/Transfer Per Booking:</strong> Please book one tour
-            or transfer at a time as each has a unique start time and date.
-          </li>
-          <li>
-            <strong>Hotel Pickup/Drop-off:</strong> For guests staying at a
-            hotel or resort, the pickup and drop-off point is the main lobby.
-          </li>
-          <li>
-            <strong>Children Under 5:</strong> Travel free with an accompanying
-            adult.
-          </li>
-        </ul>
-      </div>
+     <BookingInfo></BookingInfo>
       <h2 className="text-3xl font-bold text-center mb-6 text-emerald-600">
         Booking Form
       </h2>
 
       {/* Transfer Type */}
       <div className="mb-2">
+      <div className="mb-2">
+        <label
+          htmlFor="name"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Your Name:
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
+        />
+      </div>
         <label className="block text-gray-700 font-semibold mb-2">
           Transfer Type:
         </label>
@@ -414,21 +408,7 @@ export const TransferBookingForm = ({ tour }) => {
           className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
       </div>
-      <div className="mb-2">
-        <label
-          htmlFor="name"
-          className="block text-gray-700 font-semibold mb-2"
-        >
-          Your Name:
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
-        />
-      </div>
+     
       <div className="flex items-center mb-2">
         <input
           type="checkbox"
