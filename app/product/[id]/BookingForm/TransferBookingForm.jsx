@@ -95,6 +95,7 @@ export const TransferBookingForm = ({ tour }) => {
       pay_online: isPayingOnline ? "Yes" : "No", // Pay online field
       price_per_person: pricePerPerson,
       total_price: totalPrice,
+      name: form.current.name.value,
     };
     setUserFormData(formData);
     try {
