@@ -151,7 +151,7 @@
     "All Other Resorts in Falmouth Price": "18",
     "All Villas/Airbnbs/Home in Falmouth Price": "18",
     "Excellence Oyster Bay Price": "17",
-    "Ocean Coral Springs and Eden Bay by H10 Hotels Price": "17",
+    "Ocean Coral Springs and Eden Bay by H10 Hotels Price": "16",
     "RIU Aquarelle Price": "16",
     "Royalton White Sands & Blue Water Price": "15",
     "imageExtension": "webp"
@@ -244,7 +244,7 @@
     "priceMandeville": "75",
     "priceMobay": "50",
     "priceNegril": "70",
-    "priceOchi": "15",
+    "priceOchi": "20",
     "pricePortAntonio": "60",
     "priceRunaway": "25",
     "category": "mpt",
@@ -1524,7 +1524,7 @@
     "priceLowest": "15.00",
     "priceHighest": "40.00",
     "priceFalmouth": "40",
-    "priceOchi": "15",
+    "priceOchi": "20",
     "priceRunaway": "20",
     "category": "st",
     "imageExtension": "webp"
