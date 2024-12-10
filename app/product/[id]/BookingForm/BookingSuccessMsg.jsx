@@ -39,11 +39,15 @@ function BookingSuccessMsg({ orderNumber, formData }) {
           </div>
           <div className="bg-white p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold text-emerald-600">
-              Card Payment on Arrival (Coming Soon)
+              Card Payment on Arrival
             </h2>
             <p>
-              We are working on enabling card payments upon arrival. This
-              feature will be available soon, so stay tuned!
+              Prefer to pay with card on arrival? We got you! We accept the
+              following cards:Visa, Mastercard, Discover Card, and American
+              Express.{" "}
+              <span className="text-red-400">
+                Please note that there is a 4% processing fee.
+              </span>
             </p>
           </div>
         </div>
