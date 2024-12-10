@@ -43,7 +43,7 @@ function BookingSuccessMsg({ orderNumber, formData }) {
             </h2>
             <p>
               Prefer to pay with card on arrival? We got you! We accept the
-              following cards:Visa, Mastercard, Discover Card, and American
+              following cards: Visa, Mastercard, Discover Card, and American
               Express.{" "}
               <span className="text-red-400">
                 Please note that there is a 4% processing fee.
