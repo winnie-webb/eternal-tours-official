@@ -2,6 +2,8 @@
 
 import React, { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { FaCcDiscover, FaCcMastercard, FaCcVisa } from "react-icons/fa";
+import { SiAmericanexpress } from "react-icons/si";
 
 const PaymentComponent = () => {
   const [amount, setAmount] = useState("");
@@ -45,14 +47,30 @@ const PaymentComponent = () => {
           <h2 className="text-xl font-semibold text-emerald-600">
             Card Payment on Arrival
           </h2>
-          <p>
+          <div>
             Prefer to pay with card on arrival? We got you! We accept the
-            following cards:Visa, Mastercard, Discover Card, and American
-            Express.{" "}
+            following cards:
+            <div className="my-2">
+              <div className="flex items-center gap-1">
+                <FaCcVisa size={30} /> Visa
+              </div>
+              <div className="flex items-center  gap-1">
+                <FaCcMastercard size={30} />
+                Mastercard{" "}
+              </div>
+              <div className="flex items-center  gap-1">
+                <FaCcDiscover size={30} />
+                Discover Card{" "}
+              </div>
+              <div className="flex items-center  gap-1">
+                <SiAmericanexpress size={30} />
+                American Express{" "}
+              </div>
+            </div>
             <span className="text-red-400">
               Please note that there is a 4% processing fee.
             </span>
-          </p>
+          </div>
         </div>
       </div>
     </section>

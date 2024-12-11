@@ -1,5 +1,6 @@
 import getPickupTitle from "@/app/utils/getPickupTitle";
 import { AiOutlineCheckCircle } from "react-icons/ai";
+import { FaCcDiscover, FaCcMastercard, FaCcVisa } from "react-icons/fa";
 
 function BookingSuccessMsg({ orderNumber, formData }) {
   const pickupForTour = getPickupTitle(formData.pickup_dropoff);
@@ -41,14 +42,30 @@ function BookingSuccessMsg({ orderNumber, formData }) {
             <h2 className="text-xl font-semibold text-emerald-600">
               Card Payment on Arrival
             </h2>
-            <p>
+            <div>
               Prefer to pay with card on arrival? We got you! We accept the
-              following cards: Visa, Mastercard, Discover Card, and American
-              Express.{" "}
+              following cards:
+              <div className="my-2">
+                <div className="flex items-center gap-1">
+                  <FaCcVisa size={30} /> Visa
+                </div>
+                <div className="flex items-center  gap-1">
+                  <FaCcMastercard size={30} />
+                  Mastercard{" "}
+                </div>
+                <div className="flex items-center  gap-1">
+                  <FaCcDiscover size={30} />
+                  Discover Card{" "}
+                </div>
+                <div className="flex items-center  gap-1">
+                  <SiAmericanexpress size={30} />
+                  American Express{" "}
+                </div>
+              </div>
               <span className="text-red-400">
                 Please note that there is a 4% processing fee.
               </span>
-            </p>
+            </div>
           </div>
         </div>
       </section>
