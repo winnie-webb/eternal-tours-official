@@ -422,7 +422,6 @@ export const TransferBookingForm = ({ tour }) => {
           id="pay-online"
           name="pay-online"
           className="mr-2"
-          required
           onChange={(e) => {
             setIsPayingOnline(e.target.checked);
           }}
