@@ -48,19 +48,19 @@ function BookingSuccessMsg({ orderNumber, formData }) {
               following cards:
               <div className="my-2">
                 <div className="flex items-center gap-1">
-                  <FaCcVisa size={30} /> Visa
+                  <FaCcVisa size={30} color="#1A1F71" /> Visa
                 </div>
-                <div className="flex items-center  gap-1">
-                  <FaCcMastercard size={30} />
-                  Mastercard{" "}
+                <div className="flex items-center gap-1">
+                  <FaCcMastercard size={30} color="#EB001B" />
+                  Mastercard
                 </div>
-                <div className="flex items-center  gap-1">
-                  <FaCcDiscover size={30} />
-                  Discover Card{" "}
+                <div className="flex items-center gap-1">
+                  <FaCcDiscover size={30} color="#FF6000" />
+                  Discover Card
                 </div>
-                <div className="flex items-center  gap-1">
-                  <SiAmericanexpress size={30} />
-                  American Express{" "}
+                <div className="flex items-center gap-1">
+                  <SiAmericanexpress size={30} color="#2E77BC" />
+                  American Express
                 </div>
               </div>
               <span className="text-red-400">
