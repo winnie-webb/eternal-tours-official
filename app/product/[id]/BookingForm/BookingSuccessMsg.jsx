@@ -1,6 +1,7 @@
 import getPickupTitle from "@/app/utils/getPickupTitle";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { FaCcDiscover, FaCcMastercard, FaCcVisa } from "react-icons/fa";
+import { SiAmericanexpress } from "react-icons/si";
 
 function BookingSuccessMsg({ orderNumber, formData }) {
   const pickupForTour = getPickupTitle(formData.pickup_dropoff);
