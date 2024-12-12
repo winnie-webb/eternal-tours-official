@@ -92,7 +92,7 @@ export const TransferBookingForm = ({ tour }) => {
       departure_airlines_name: transferDetails.departureAirlines,
       adults: adults,
       kids: kids,
-      pay_online: isPayingOnline ? "Yes" : "No", // Pay online field
+      pay_online: isPayingOnline ? "Yes" : "No",
       price_per_person: pricePerPerson,
       total_price: totalPrice,
       name: form.current.name.value,
@@ -135,28 +135,28 @@ export const TransferBookingForm = ({ tour }) => {
       className="max-w-3xl mx-auto bg-white p-6 shadow-lg rounded-lg mt-8"
       onSubmit={sendEmail}
     >
-     <BookingInfo></BookingInfo>
+      <BookingInfo></BookingInfo>
       <h2 className="text-3xl font-bold text-center mb-6 text-emerald-600">
         Booking Form
       </h2>
 
       {/* Transfer Type */}
       <div className="mb-2">
-      <div className="mb-2">
-        <label
-          htmlFor="name"
-          className="block text-gray-700 font-semibold mb-2"
-        >
-          Your Name:
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
-        />
-      </div>
+        <div className="mb-2">
+          <label
+            htmlFor="name"
+            className="block text-gray-700 font-semibold mb-2"
+          >
+            Your Name:
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
+          />
+        </div>
         <label className="block text-gray-700 font-semibold mb-2">
           Transfer Type:
         </label>
@@ -409,7 +409,7 @@ export const TransferBookingForm = ({ tour }) => {
           className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
       </div>
-     
+
       <div className="flex items-center mb-2">
         <input
           type="checkbox"
