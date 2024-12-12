@@ -79,6 +79,9 @@ function BookingSuccessMsg({ orderNumber, formData }) {
           <strong>Tour Name:</strong> {formData.tourName}
         </p>
         <p>
+          <strong>Your Name:</strong> {formData.name}
+        </p>
+        <p>
           <strong>Email:</strong> {formData.email}
         </p>
         <p>

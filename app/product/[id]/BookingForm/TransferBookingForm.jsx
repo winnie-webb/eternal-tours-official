@@ -251,6 +251,7 @@ export const TransferBookingForm = ({ tour }) => {
           id="arrival-time"
           name="arrivalTime"
           placeholder="hh:mm AM/PM format"
+          required
           onChange={(e) =>
             handleTransferDetailsChange(e.target.name, e.target.value)
           }
@@ -271,6 +272,7 @@ export const TransferBookingForm = ({ tour }) => {
           id="airlines-name"
           name="airlinesName"
           placeholder="NAME & XYZ1234"
+          required
           onChange={(e) =>
             handleTransferDetailsChange(e.target.name, e.target.value)
           }
@@ -311,6 +313,7 @@ export const TransferBookingForm = ({ tour }) => {
           id="departure-time"
           name="departureTime"
           placeholder="hh:mm AM/PM format"
+          required
           onChange={(e) =>
             handleTransferDetailsChange(e.target.name, e.target.value)
           }
@@ -330,6 +333,7 @@ export const TransferBookingForm = ({ tour }) => {
           type="time"
           id="pickup-time"
           name="pickupTime"
+          required
           onChange={(e) =>
             handleTransferDetailsChange(e.target.name, e.target.value)
           }
@@ -350,6 +354,7 @@ export const TransferBookingForm = ({ tour }) => {
           id="departure-airlines"
           name="departureAirlines"
           placeholder="NAME & XYZ1234"
+          required
           onChange={(e) =>
             handleTransferDetailsChange(e.target.name, e.target.value)
           }
@@ -369,6 +374,7 @@ export const TransferBookingForm = ({ tour }) => {
           type="text"
           id="pickup-dropoff"
           name="pickupDropoff"
+          required
           onChange={(e) =>
             handleTransferDetailsChange(e.target.name, e.target.value)
           }
@@ -416,6 +422,7 @@ export const TransferBookingForm = ({ tour }) => {
           id="pay-online"
           name="pay-online"
           className="mr-2"
+          required
           onChange={(e) => {
             setIsPayingOnline(e.target.checked);
           }}
