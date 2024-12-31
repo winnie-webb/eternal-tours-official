@@ -11,10 +11,10 @@ const ContactUs = () => {
 
     emailjs
       .sendForm(
-        "service_b3u5zxa",
-        "template_7eif1gi",
+        "service_kmd66k9",
+        "template_ncl1a7a",
         form.current,
-        "nxC4W-fiaC4DvJpPJ"
+        "7pjYjqAMh02paFyYr"
       )
       .then(
         () => {
