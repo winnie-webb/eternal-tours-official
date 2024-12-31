@@ -109,7 +109,7 @@ export const TourBookingForm = ({ tour }) => {
         sendEmail();
       }}
     >
- <BookingInfo></BookingInfo>
+      <BookingInfo></BookingInfo>
 
       <h2 className="text-3xl font-bold text-center mb-6 text-emerald-600">
         Booking Form
@@ -150,7 +150,7 @@ export const TourBookingForm = ({ tour }) => {
           className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
         />
       </div>
-   
+
       <div className="mb-2">
         <label
           htmlFor="phone_number"

@@ -40,10 +40,12 @@ const BookingsPage = () => {
   useEffect(() => {
     const bookingsCollection = collection(db, "bookings");
     const unsubscribe = onSnapshot(bookingsCollection, (snapshot) => {
-      const bookingsList = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const bookingsList = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .sort((a, b) => b.timestamp.toDate() - a.timestamp.toDate());
       setBookings(bookingsList);
     });
 
