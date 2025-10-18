@@ -6,9 +6,13 @@ import axios from "axios";
 import GalleryUpload from "./UploadGallery";
 import { auth } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { FaSearch, FaTimes, FaFilter } from "react-icons/fa";
 
 const AdminPanel = () => {
   const [productList, setProductList] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [editingProduct, setEditingProduct] = useState(null);
   const [newProduct, setNewProduct] = useState(null);
   const [category, setCategory] = useState("mpt");
@@ -34,6 +38,7 @@ const AdminPanel = () => {
       setLoading(true);
       const response = await axios.get("/api/products");
       setProductList(response.data);
+      setFilteredProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
       alert("Failed to fetch products. Check console for details.");
@@ -41,6 +46,35 @@ const AdminPanel = () => {
       setLoading(false);
     }
   };
+
+  // Filter products based on search term and category
+  const filterProducts = () => {
+    let filtered = [...productList];
+
+    // Filter by search term
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(
+        (product) =>
+          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.desc.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(
+        (product) => product.category === selectedCategory
+      );
+    }
+
+    setFilteredProducts(filtered);
+  };
+
+  // Effect to filter products when search term or category changes
+  useEffect(() => {
+    filterProducts();
+  }, [searchTerm, selectedCategory, productList]);
 
   // Check migration status
   const checkMigrationStatus = async () => {
@@ -210,42 +244,189 @@ const AdminPanel = () => {
         </div>
       )}
 
-      {/* Products Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-        {productList.map((product, index) => (
-          <div
-            key={product.id + product.category + index}
-            className="border rounded-lg overflow-hidden shadow-md bg-white"
-          >
-            <img
-              src={`/${product.id.split("-").shift()}/${product.id}.${
-                product.imageExtension
-              }`}
-              alt={product.title}
-              className="w-full h-40 object-cover"
-            />
-            <div className="p-4">
-              <h3 className="text-lg font-bold">{product.title}</h3>
-              <p className="text-sm text-gray-600 my-2">
-                ${product.priceLowest} - ${product.priceHighest}
-              </p>
-              <div className="flex gap-2">
+      {/* Search and Filter Section */}
+      <div className="mb-6 p-4 bg-white rounded-lg shadow-md">
+        <div className="flex items-center gap-2 mb-4">
+          <FaSearch className="text-emerald-600" />
+          <h2 className="text-xl font-semibold">Search & Filter Products</h2>
+        </div>
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search Input */}
+          <div className="flex-1">
+            <label className="block text-sm font-medium mb-1">
+              Search Products
+            </label>
+            <div className="relative">
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by title, ID, or description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full border border-gray-300 rounded-md pl-10 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              />
+              {searchTerm && (
                 <button
-                  onClick={() => handleEditProduct(product)}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white py-1 px-3 rounded-md text-sm"
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  Edit
+                  <FaTimes />
                 </button>
-                <button
-                  onClick={() => handleDeleteProduct(product.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md text-sm"
-                >
-                  Delete
-                </button>
-              </div>
+              )}
             </div>
           </div>
-        ))}
+
+          {/* Category Filter */}
+          <div className="md:w-64">
+            <label className="block text-sm font-medium mb-1">
+              <FaFilter className="inline mr-1" />
+              Filter by Category
+            </label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            >
+              <option value="all">All Categories</option>
+              <option value="mpt">Most Popular Tours</option>
+              <option value="at">Airport Transfers</option>
+              <option value="cse">Cruise Shore Excursions</option>
+              <option value="ctp">Combo Tour Packages</option>
+              <option value="egt">Exclusive Golf Tours</option>
+              <option value="st">Shopping Tours</option>
+              <option value="abc">Attractions / Beach / City Tours</option>
+              <option value="edt">Eating / Dining Tours</option>
+              <option value="ncb">Night Club / Bar</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="mt-3 text-sm text-gray-600">
+          Showing {filteredProducts.length} of {productList.length} products
+          {searchTerm && ` for "${searchTerm}"`}
+          {selectedCategory !== "all" && ` in category "${selectedCategory}"`}
+        </div>
+
+        {/* Quick Actions and Clear Filters */}
+        <div className="flex flex-wrap items-center justify-between mt-4 gap-2">
+          <div className="flex flex-wrap gap-2">
+            {/* Quick Category Filters */}
+            <span className="text-sm text-gray-600">Quick filters:</span>
+            {["mpt", "at", "ctp", "abc"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-2 py-1 text-xs rounded-full border transition-colors ${
+                  selectedCategory === cat
+                    ? "bg-emerald-100 border-emerald-300 text-emerald-700"
+                    : "bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {cat.toUpperCase()}
+              </button>
+            ))}
+          </div>
+
+          {/* Clear Filters */}
+          {(searchTerm || selectedCategory !== "all") && (
+            <button
+              onClick={() => {
+                setSearchTerm("");
+                setSelectedCategory("all");
+              }}
+              className="flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-800 px-2 py-1 rounded border border-emerald-200 hover:bg-emerald-50 transition-colors"
+            >
+              <FaTimes className="text-xs" />
+              Clear all filters
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Products Section */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-4">
+          Products ({filteredProducts.length})
+        </h2>
+        {filteredProducts.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <div className="text-gray-400 text-4xl mb-4">🔍</div>
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+              No products found
+            </h3>
+            <p className="text-gray-500">
+              {searchTerm || selectedCategory !== "all"
+                ? "Try adjusting your search terms or filters"
+                : "No products available"}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((product, index) => (
+              <div
+                key={product.id + product.category + index}
+                className={`border rounded-lg overflow-hidden shadow-md bg-white hover:shadow-lg transition-shadow ${
+                  searchTerm &&
+                  (product.title
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()) ||
+                    product.id.toLowerCase().includes(searchTerm.toLowerCase()))
+                    ? "ring-2 ring-emerald-200"
+                    : ""
+                }`}
+              >
+                <div className="relative">
+                  <img
+                    src={`/${product.id.split("-").shift()}/${product.id}.${
+                      product.imageExtension
+                    }`}
+                    alt={product.title}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                    {product.category.toUpperCase()}
+                  </div>
+                </div>
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                      ID: {product.id}
+                    </span>
+                  </div>
+                  <h3
+                    className="text-lg font-bold mb-2 line-clamp-2"
+                    title={product.title}
+                  >
+                    {product.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    <span className="font-semibold text-emerald-600">
+                      ${product.priceLowest}
+                    </span>
+                    {product.priceHighest !== product.priceLowest && (
+                      <span> - ${product.priceHighest}</span>
+                    )}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditProduct(product)}
+                      className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-1 px-3 rounded-md text-sm transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProduct(product.id)}
+                      className="flex-1 bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md text-sm transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Product Editing Modal */}

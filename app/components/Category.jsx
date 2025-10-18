@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { FaAngleLeft, FaAngleRight, FaStar, FaHeart } from "react-icons/fa";
+import { FaAngleLeft, FaAngleRight, FaHeart } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import Link from "next/link";
 
@@ -85,9 +85,6 @@ const Category = ({
     }
   };
 
-  // Generate star rating (mock data - you can replace with actual ratings)
-  const generateRating = () => 4 + Math.random();
-
   if (loading) {
     return (
       <section className="relative p-6 w-[90%] xl:w-[85%] 2xl:w-[70%] mx-auto mt-12 mb-12">
@@ -138,175 +135,144 @@ const Category = ({
         </div>
       ) : (
         <>
-          {/* Cards Grid */}
-          <div
-            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-${itemsPerPage} gap-8 transition-all duration-500 ${
-              isAnimating
-                ? "opacity-0 transform scale-95"
-                : "opacity-100 transform scale-100"
-            }`}
-          >
-            {paginatedData.map((tour, index) => {
-              const rating = generateRating();
-              return (
-                <Link
-                  href={`/product/${tour.id}`}
-                  key={tour.id}
-                  className="group relative block"
-                  onMouseEnter={() => setHoveredCard(index)}
-                  onMouseLeave={() => setHoveredCard(null)}
+          {/* Carousel Container */}
+          <div className="relative">
+            {/* Navigation Arrows */}
+            {totalPages > 1 && (
+              <>
+                {/* Left Arrow */}
+                <button
+                  onClick={() => changePage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 z-20 w-14 h-14 flex items-center justify-center rounded-full bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-600 hover:text-white hover:scale-110 group"
+                  aria-label="Previous tours"
                 >
-                  <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:-translate-y-2 cursor-pointer">
-                    {/* Badge */}
-                    {index === 0 && currentPage === 1 && (
-                      <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-                        BEST VALUE
-                      </div>
-                    )}
+                  <FaAngleLeft className="text-xl transition-transform duration-300 group-hover:-translate-x-1" />
+                </button>
 
-                    {/* Favorite Button */}
-                    <button className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-300 group/btn">
-                      <FaHeart className="text-gray-400 group-hover/btn:text-red-500 transition-colors duration-300" />
-                    </button>
+                {/* Right Arrow */}
+                <button
+                  onClick={() => changePage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 z-20 w-14 h-14 flex items-center justify-center rounded-full bg-white shadow-xl hover:shadow-2xl disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-600 hover:text-white hover:scale-110 group"
+                  aria-label="Next tours"
+                >
+                  <FaAngleRight className="text-xl transition-transform duration-300 group-hover:translate-x-1" />
+                </button>
+              </>
+            )}
 
-                    {/* Image Container */}
-                    <div className="relative h-64 w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-[1]"></div>
-                      <Image
-                        className="object-cover object-center transform transition-transform duration-700 group-hover:scale-110"
-                        src={`/${tour.id.split("-").shift()}/${tour.id}.${
-                          tour.imageExtension
-                        }`}
-                        alt={tour.title}
-                        fill={true}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      />
-
-                      {/* Overlay gradient on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-[2]"></div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-5">
-                      {/* Rating */}
-                      <div className="flex items-center gap-1 mb-2">
-                        {[...Array(5)].map((_, i) => (
-                          <FaStar
-                            key={i}
-                            className={`text-sm ${
-                              i < Math.floor(rating)
-                                ? "text-yellow-400"
-                                : "text-gray-200"
-                            }`}
-                          />
-                        ))}
-                        <span className="text-sm text-gray-500 ml-2">
-                          ({rating.toFixed(1)})
-                        </span>
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-lg font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-emerald-600 transition-colors duration-300">
-                        {tour.title}
-                      </h3>
-
-                      {/* Price Section */}
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <p className="text-sm text-gray-500 line-through">
-                            ${(tour.priceLowest * 1.2).toFixed(2)}
-                          </p>
-                          <p className="text-2xl font-bold text-emerald-600">
-                            ${tour.priceLowest}
-                          </p>
-                          <p className="text-xs text-gray-500 uppercase tracking-wide">
-                            Per Person
-                          </p>
+            {/* Cards Grid */}
+            <div
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-${itemsPerPage} gap-8 transition-all duration-500 ${
+                isAnimating
+                  ? "opacity-0 transform scale-95"
+                  : "opacity-100 transform scale-100"
+              }`}
+            >
+              {paginatedData.map((tour, index) => {
+                return (
+                  <Link
+                    href={`/product/${tour.id}`}
+                    key={tour.id}
+                    className="group relative block"
+                    onMouseEnter={() => setHoveredCard(index)}
+                    onMouseLeave={() => setHoveredCard(null)}
+                  >
+                    <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transform transition-all duration-500 hover:-translate-y-2 cursor-pointer border-2 border-transparent hover:border-emerald-500">
+                      {/* Badge */}
+                      {index === 0 && currentPage === 1 && (
+                        <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
+                          BEST VALUE
                         </div>
+                      )}
 
-                        {/* CTA Arrow */}
-                        <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center transform translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
-                          <FaAngleRight className="text-white" />
+                      {/* Favorite Button */}
+                      <button className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-300 group/btn">
+                        <FaHeart className="text-gray-400 group-hover/btn:text-red-500 transition-colors duration-300" />
+                      </button>
+
+                      {/* Image Container */}
+                      <div className="relative h-64 w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-[1]"></div>
+                        <Image
+                          className="object-cover object-center transform transition-transform duration-700 group-hover:scale-110"
+                          src={`/${tour.id.split("-").shift()}/${tour.id}.${
+                            tour.imageExtension
+                          }`}
+                          alt={tour.title}
+                          fill={true}
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        />
+
+                        {/* Overlay gradient on hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-[2]"></div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-5">
+                        {/* Title */}
+                        <h3 className="text-lg font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-emerald-600 transition-colors duration-300">
+                          {tour.title}
+                        </h3>
+
+                        {/* Price Section */}
+                        <div className="flex items-end justify-between">
+                          <div>
+                            <p className="text-2xl font-bold text-emerald-600">
+                              ${tour.priceLowest}
+                            </p>
+                            <p className="text-xs text-gray-500 uppercase tracking-wide">
+                              Per Person
+                            </p>
+                          </div>
+
+                          {/* CTA Arrow */}
+                          <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center transform translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+                            <FaAngleRight className="text-white" />
+                          </div>
                         </div>
                       </div>
                     </div>
-
-                    {/* Animated border gradient */}
-                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                      <div className="absolute inset-[-2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl animate-gradient"></div>
-                      <div className="absolute inset-0 bg-white rounded-2xl"></div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Modern Pagination */}
+          {/* Dot Indicators */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center mt-12 gap-2">
-              {/* Previous Button */}
-              <button
-                onClick={() => changePage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="w-12 h-12 flex items-center justify-center rounded-xl bg-white shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-600 hover:text-white group"
-              >
-                <FaAngleLeft className="transition-transform duration-300 group-hover:-translate-x-0.5" />
-              </button>
+            <div className="flex items-center justify-center mt-12 gap-3">
+              {Array.from({ length: totalPages }, (_, index) => {
+                const pageNum = index + 1;
+                const isActive = currentPage === pageNum;
 
-              {/* Page Numbers */}
-              <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, index) => {
-                  const pageNum = index + 1;
-                  const isActive = currentPage === pageNum;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => changePage(pageNum)}
+                    className={`transition-all duration-300 rounded-full ${
+                      isActive
+                        ? "w-12 h-3 bg-gradient-to-r from-emerald-500 to-teal-600"
+                        : "w-3 h-3 bg-gray-300 hover:bg-gray-400"
+                    }`}
+                    aria-label={`Go to page ${pageNum}`}
+                  >
+                    <span className="sr-only">Page {pageNum}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
-                  // Show first, last, current, and adjacent pages
-                  if (
-                    pageNum === 1 ||
-                    pageNum === totalPages ||
-                    Math.abs(pageNum - currentPage) <= 1
-                  ) {
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => changePage(pageNum)}
-                        className={`relative w-12 h-12 rounded-xl font-semibold transition-all duration-300 ${
-                          isActive
-                            ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg scale-110"
-                            : "bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
-                        }`}
-                      >
-                        {pageNum}
-                        {isActive && (
-                          <span className="absolute inset-0 rounded-xl bg-white opacity-20 animate-ping"></span>
-                        )}
-                      </button>
-                    );
-                  } else if (
-                    pageNum === currentPage - 2 ||
-                    pageNum === currentPage + 2
-                  ) {
-                    return (
-                      <span
-                        key={index}
-                        className="w-8 text-center text-gray-400"
-                      >
-                        •••
-                      </span>
-                    );
-                  }
-                  return null;
-                })}
-              </div>
-
-              {/* Next Button */}
-              <button
-                onClick={() => changePage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="w-12 h-12 flex items-center justify-center rounded-xl bg-white shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-teal-600 hover:text-white group"
-              >
-                <FaAngleRight className="transition-transform duration-300 group-hover:translate-x-0.5" />
-              </button>
+          {/* Page Counter */}
+          {totalPages > 1 && (
+            <div className="text-center mt-4">
+              <p className="text-sm text-gray-500">
+                Showing {(currentPage - 1) * itemsPerPage + 1} -{" "}
+                {Math.min(currentPage * itemsPerPage, products.length)} of{" "}
+                {products.length} tours
+              </p>
             </div>
           )}
         </>
@@ -333,18 +299,6 @@ const Category = ({
         }
         .animation-delay-4000 {
           animation-delay: 4s;
-        }
-        @keyframes gradient {
-          0%,
-          100% {
-            opacity: 0.5;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-        .animate-gradient {
-          animation: gradient 3s ease-in-out infinite;
         }
       `}</style>
     </section>
