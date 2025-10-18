@@ -22,11 +22,8 @@ export async function middleware(request) {
     }
   }
 
-  // Protect sensitive API routes
-  if (
-    pathname.startsWith("/api/products") ||
-    pathname.startsWith("/api/migrate")
-  ) {
+  // Protect sensitive API routes (only for write operations)
+  if (pathname.startsWith("/api/migrate")) {
     const token =
       request.cookies.get("auth-token")?.value ||
       request.headers.get("authorization")?.replace("Bearer ", "");
@@ -46,6 +43,35 @@ export async function middleware(request) {
         { error: "Invalid authentication token" },
         { status: 401 }
       );
+    }
+  }
+
+  // Protect write operations on products API (POST, PUT, DELETE)
+  if (pathname.startsWith("/api/products")) {
+    const method = request.method;
+
+    // Only protect write operations, allow GET requests for public access
+    if (method !== "GET") {
+      const token =
+        request.cookies.get("auth-token")?.value ||
+        request.headers.get("authorization")?.replace("Bearer ", "");
+
+      if (!token) {
+        return NextResponse.json(
+          { error: "Authentication required" },
+          { status: 401 }
+        );
+      }
+
+      try {
+        await verifyAuthToken(token);
+        return NextResponse.next();
+      } catch {
+        return NextResponse.json(
+          { error: "Invalid authentication token" },
+          { status: 401 }
+        );
+      }
     }
   }
 

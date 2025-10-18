@@ -21,8 +21,8 @@ async function getProducts() {
   } catch (error) {
     console.error("Error fetching products:", error);
     // Fallback to JSON import for development/build time
-    const { products } = await import("@/app/data/products.json");
-    return products;
+    const products = await import("@/app/data/products.json");
+    return products.default || [];
   }
 }
 

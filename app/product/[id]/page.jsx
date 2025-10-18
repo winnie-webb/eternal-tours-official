@@ -22,8 +22,8 @@ async function getProducts() {
   } catch (error) {
     console.error("Error fetching products:", error);
     // Fallback to JSON import for development/build time
-    const { products } = await import("@/app/data/products.json");
-    return products;
+    const products = await import("@/app/data/products.json");
+    return products.default || [];
   }
 }
 
@@ -46,8 +46,9 @@ async function getProduct(id) {
   } catch (error) {
     console.error("Error fetching product:", error);
     // Fallback to finding in local JSON
-    const { products } = await import("@/app/data/products.json");
-    return products.find((product) => product.id === id);
+    const products = await import("@/app/data/products.json");
+    const productArray = products.default || [];
+    return productArray.find((product) => product.id === id);
   }
 }
 
