@@ -4,39 +4,61 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   auth,
-  db,
   registerServiceWorker,
   requestPermission,
   saveAdminToken,
 } from "@/firebase";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        const user = userCredential.user;
+    setIsLoading(true);
+    setError("");
 
-        // Create a new admin document for each login (with a unique ID)
+    try {
+      // First authenticate with Firebase
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
-        // Register service worker and save the FCM token
-        await registerServiceWorker();
-        const token = await requestPermission();
-        await saveAdminToken(user, token); // Save the FCM token for notifications
+      // Get Firebase ID token for verification
+      const idToken = await user.getIdToken();
 
-        // Redirect to the admin page after login
-        router.push("/admin");
-      })
-      .catch((error) => {
-        setError("Invalid email or password. Please try again.");
-        console.error(error.message);
+      // Send to our secure login endpoint
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
       });
+
+      if (!response.ok) {
+        throw new Error("Authentication failed");
+      }
+
+      // Register service worker and save the FCM token for notifications
+      await registerServiceWorker();
+      const fcmToken = await requestPermission();
+      await saveAdminToken(user, fcmToken);
+
+      // Redirect to the admin page after successful authentication
+      router.push("/admin");
+    } catch (error) {
+      setError("Invalid email or password. Please try again.");
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -64,9 +86,10 @@ const Login = () => {
         />
         <button
           type="submit"
-          className="w-full p-2 bg-emerald-600 text-white rounded"
+          disabled={isLoading}
+          className="w-full p-2 bg-emerald-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

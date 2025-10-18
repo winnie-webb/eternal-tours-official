@@ -4,8 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import GalleryUpload from "./UploadGallery";
-import { auth } from "@/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+
 import { FaSearch, FaTimes, FaFilter } from "react-icons/fa";
 
 const AdminPanel = () => {
@@ -23,13 +22,20 @@ const AdminPanel = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/verify");
+        if (!response.ok) {
+          router.push("/login");
+          return;
+        }
+      } catch (error) {
+        console.error("Auth verification failed:", error);
         router.push("/login");
       }
-    });
+    };
 
-    return () => unsubscribe();
+    checkAuth();
   }, [router]);
 
   // Fetch products from Firebase
@@ -69,6 +75,18 @@ const AdminPanel = () => {
     }
 
     setFilteredProducts(filtered);
+  };
+
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Force redirect even if logout fails
+      router.push("/login");
+    }
   };
 
   // Effect to filter products when search term or category changes
@@ -216,7 +234,15 @@ const AdminPanel = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Admin Panel</h1>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md"
+        >
+          Logout
+        </button>
+      </div>
 
       {/* Migration Status Section */}
       {migrationStatus && (
