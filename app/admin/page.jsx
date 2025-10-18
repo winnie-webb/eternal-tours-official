@@ -4,8 +4,20 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import GalleryUpload from "./UploadGallery";
-
-import { FaSearch, FaTimes, FaFilter } from "react-icons/fa";
+import {
+  FaSearch,
+  FaTimes,
+  FaFilter,
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaBox,
+  FaDollarSign,
+  FaChartLine,
+  FaSignOutAlt,
+  FaTags,
+} from "react-icons/fa";
+import { HiSparkles } from "react-icons/hi";
 
 const AdminPanel = () => {
   const [productList, setProductList] = useState([]);
@@ -34,11 +46,9 @@ const AdminPanel = () => {
         router.push("/login");
       }
     };
-
     checkAuth();
   }, [router]);
 
-  // Fetch products from Firebase
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -53,11 +63,8 @@ const AdminPanel = () => {
     }
   };
 
-  // Filter products based on search term and category
   const filterProducts = () => {
     let filtered = [...productList];
-
-    // Filter by search term
     if (searchTerm.trim()) {
       filtered = filtered.filter(
         (product) =>
@@ -66,35 +73,28 @@ const AdminPanel = () => {
           product.desc.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
-    // Filter by category
     if (selectedCategory !== "all") {
       filtered = filtered.filter(
         (product) => product.category === selectedCategory
       );
     }
-
     setFilteredProducts(filtered);
   };
 
-  // Logout function
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
       router.push("/login");
     } catch (error) {
       console.error("Logout error:", error);
-      // Force redirect even if logout fails
       router.push("/login");
     }
   };
 
-  // Effect to filter products when search term or category changes
   useEffect(() => {
     filterProducts();
   }, [searchTerm, selectedCategory, productList]);
 
-  // Check migration status
   const checkMigrationStatus = async () => {
     try {
       const response = await axios.get("/api/migrate");
@@ -104,7 +104,6 @@ const AdminPanel = () => {
     }
   };
 
-  // Migrate products from JSON to Firebase
   const handleMigration = async () => {
     try {
       const response = await axios.post("/api/migrate");
@@ -153,14 +152,13 @@ const AdminPanel = () => {
       category,
       imageExtension: "webp",
     };
-
     setNewProduct(newProductObject);
   };
 
   const handleSaveProduct = async () => {
     try {
       await axios.put(`/api/products/${editingProduct.id}`, editingProduct);
-      await fetchProducts(); // Refresh the list
+      await fetchProducts();
       setEditingProduct(null);
       setModalOpen(false);
       alert("Product updated successfully!");
@@ -177,7 +175,7 @@ const AdminPanel = () => {
   const handleSaveNewProduct = async () => {
     try {
       await axios.post("/api/products", newProduct);
-      await fetchProducts(); // Refresh the list
+      await fetchProducts();
       setNewProduct(null);
       alert("Product created successfully!");
     } catch (error) {
@@ -194,7 +192,7 @@ const AdminPanel = () => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
         await axios.delete(`/api/products/${productId}`);
-        await fetchProducts(); // Refresh the list
+        await fetchProducts();
         alert("Product deleted successfully!");
       } catch (error) {
         console.error("Error deleting product:", error);
@@ -210,426 +208,309 @@ const AdminPanel = () => {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     const fileExtension = file?.name.split(".").pop();
-
     if (editingProduct) {
-      setEditingProduct({
-        ...editingProduct,
-        imageExtension: fileExtension,
-      });
+      setEditingProduct({ ...editingProduct, imageExtension: fileExtension });
     } else if (newProduct) {
-      setNewProduct({
-        ...newProduct,
-        imageExtension: fileExtension,
-      });
+      setNewProduct({ ...newProduct, imageExtension: fileExtension });
     }
   };
 
+  // Calculate stats
+  const totalProducts = productList.length;
+  const averagePrice =
+    productList.length > 0
+      ? (
+          productList.reduce(
+            (sum, p) => sum + parseFloat(p.priceLowest || 0),
+            0
+          ) / productList.length
+        ).toFixed(2)
+      : 0;
+  const categoryCount = [...new Set(productList.map((p) => p.category))].length;
+
   if (loading) {
     return (
-      <div className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading products...</div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-emerald-600 mb-4"></div>
+          <p className="text-xl text-gray-600">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Admin Panel</h1>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md"
-        >
-          Logout
-        </button>
-      </div>
-
-      {/* Migration Status Section */}
-      {migrationStatus && (
-        <div className="mb-6 p-4 bg-white rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2">Migration Status</h2>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>JSON Products: {migrationStatus.jsonProductsCount}</div>
-            <div>
-              Firebase Products: {migrationStatus.firestoreProductsCount}
-            </div>
-          </div>
-          {migrationStatus.migrationNeeded && (
-            <button
-              onClick={handleMigration}
-              className="mt-3 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
-            >
-              Migrate Products to Firebase
-            </button>
-          )}
-          {migrationStatus.allMigrated && (
-            <div className="mt-2 text-green-600 font-semibold">
-              ✅ All products are migrated to Firebase
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Search and Filter Section */}
-      <div className="mb-6 p-4 bg-white rounded-lg shadow-md">
-        <div className="flex items-center gap-2 mb-4">
-          <FaSearch className="text-emerald-600" />
-          <h2 className="text-xl font-semibold">Search & Filter Products</h2>
-        </div>
-        <div className="flex flex-col md:flex-row gap-4">
-          {/* Search Input */}
-          <div className="flex-1">
-            <label className="block text-sm font-medium mb-1">
-              Search Products
-            </label>
-            <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by title, ID, or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full border border-gray-300 rounded-md pl-10 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm("")}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <FaTimes />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Category Filter */}
-          <div className="md:w-64">
-            <label className="block text-sm font-medium mb-1">
-              <FaFilter className="inline mr-1" />
-              Filter by Category
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-            >
-              <option value="all">All Categories</option>
-              <option value="mpt">Most Popular Tours</option>
-              <option value="at">Airport Transfers</option>
-              <option value="cse">Cruise Shore Excursions</option>
-              <option value="ctp">Combo Tour Packages</option>
-              <option value="egt">Exclusive Golf Tours</option>
-              <option value="st">Shopping Tours</option>
-              <option value="abc">Attractions / Beach / City Tours</option>
-              <option value="edt">Eating / Dining Tours</option>
-              <option value="ncb">Night Club / Bar</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Results Count */}
-        <div className="mt-3 text-sm text-gray-600">
-          Showing {filteredProducts.length} of {productList.length} products
-          {searchTerm && ` for "${searchTerm}"`}
-          {selectedCategory !== "all" && ` in category "${selectedCategory}"`}
-        </div>
-
-        {/* Quick Actions and Clear Filters */}
-        <div className="flex flex-wrap items-center justify-between mt-4 gap-2">
-          <div className="flex flex-wrap gap-2">
-            {/* Quick Category Filters */}
-            <span className="text-sm text-gray-600">Quick filters:</span>
-            {["mpt", "at", "ctp", "abc"].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-2 py-1 text-xs rounded-full border transition-colors ${
-                  selectedCategory === cat
-                    ? "bg-emerald-100 border-emerald-300 text-emerald-700"
-                    : "bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {cat.toUpperCase()}
-              </button>
-            ))}
-          </div>
-
-          {/* Clear Filters */}
-          {(searchTerm || selectedCategory !== "all") && (
-            <button
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("all");
-              }}
-              className="flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-800 px-2 py-1 rounded border border-emerald-200 hover:bg-emerald-50 transition-colors"
-            >
-              <FaTimes className="text-xs" />
-              Clear all filters
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Products Section */}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">
-          Products ({filteredProducts.length})
-        </h2>
-        {filteredProducts.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <div className="text-gray-400 text-4xl mb-4">🔍</div>
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">
-              No products found
-            </h3>
-            <p className="text-gray-500">
-              {searchTerm || selectedCategory !== "all"
-                ? "Try adjusting your search terms or filters"
-                : "No products available"}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product, index) => (
-              <div
-                key={product.id + product.category + index}
-                className={`border rounded-lg overflow-hidden shadow-md bg-white hover:shadow-lg transition-shadow ${
-                  searchTerm &&
-                  (product.title
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase()) ||
-                    product.id.toLowerCase().includes(searchTerm.toLowerCase()))
-                    ? "ring-2 ring-emerald-200"
-                    : ""
-                }`}
-              >
-                <div className="relative">
-                  <img
-                    src={`/${product.id.split("-").shift()}/${product.id}.${
-                      product.imageExtension
-                    }`}
-                    alt={product.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
-                    {product.category.toUpperCase()}
-                  </div>
-                </div>
-                <div className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                      ID: {product.id}
-                    </span>
-                  </div>
-                  <h3
-                    className="text-lg font-bold mb-2 line-clamp-2"
-                    title={product.title}
-                  >
-                    {product.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    <span className="font-semibold text-emerald-600">
-                      ${product.priceLowest}
-                    </span>
-                    {product.priceHighest !== product.priceLowest && (
-                      <span> - ${product.priceHighest}</span>
-                    )}
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditProduct(product)}
-                      className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-1 px-3 rounded-md text-sm transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteProduct(product.id)}
-                      className="flex-1 bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md text-sm transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+                <HiSparkles className="text-white text-xl" />
               </div>
-            ))}
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Tour Admin
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Manage your tours & products
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg transition-all duration-200 border border-red-200"
+            >
+              <FaSignOutAlt />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Total Products</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {totalProducts}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <FaBox className="text-emerald-600 text-xl" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Avg. Price</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  ${averagePrice}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <FaDollarSign className="text-blue-600 text-xl" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Categories</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {categoryCount}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <FaTags className="text-purple-600 text-xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Migration Status */}
+        {migrationStatus && (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-sm border border-blue-200 p-6 mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <FaChartLine className="text-blue-600" />
+              <h2 className="text-xl font-bold text-gray-900">
+                Migration Status
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-white rounded-xl p-4 border border-blue-100">
+                <p className="text-sm text-gray-600">JSON Products</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {migrationStatus.jsonProductsCount}
+                </p>
+              </div>
+              <div className="bg-white rounded-xl p-4 border border-blue-100">
+                <p className="text-sm text-gray-600">Firebase Products</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {migrationStatus.firestoreProductsCount}
+                </p>
+              </div>
+            </div>
+            {migrationStatus.migrationNeeded && (
+              <button
+                onClick={handleMigration}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-colors font-medium"
+              >
+                Migrate Products to Firebase
+              </button>
+            )}
+            {migrationStatus.allMigrated && (
+              <div className="flex items-center gap-2 text-green-600 font-semibold">
+                <span className="text-2xl">✅</span>
+                All products migrated successfully
+              </div>
+            )}
           </div>
         )}
-      </div>
 
-      {/* Product Editing Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-md w-3/4 md:w-1/2 max-h-[80vh] overflow-y-auto">
-            <h2 className="text-2xl font-semibold mb-4">Edit Product</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
+        {/* Search & Filter Section */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+          <div className="flex items-center gap-2 mb-6">
+            <FaSearch className="text-emerald-600 text-xl" />
+            <h2 className="text-xl font-bold text-gray-900">Search & Filter</h2>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">
+            {/* Search Input */}
+            <div className="flex-1">
+              <div className="relative">
+                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  value={editingProduct?.title || ""}
-                  onChange={(e) =>
-                    setEditingProduct({
-                      ...editingProduct,
-                      title: e.target.value,
-                    })
-                  }
-                  className="w-full border p-2 rounded-md"
+                  placeholder="Search tours by title, ID, or description..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-xl pl-12 pr-12 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Description
-                </label>
-                <textarea
-                  value={editingProduct?.desc || ""}
-                  onChange={(e) =>
-                    setEditingProduct({
-                      ...editingProduct,
-                      desc: e.target.value,
-                    })
-                  }
-                  className="w-full border p-2 rounded-md h-20"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Lowest Price
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={editingProduct?.priceLowest || ""}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        priceLowest: e.target.value,
-                      })
-                    }
-                    className="w-full border p-2 rounded-md"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Highest Price
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={editingProduct?.priceHighest || ""}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        priceHighest: e.target.value,
-                      })
-                    }
-                    className="w-full border p-2 rounded-md"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Image Extension
-                </label>
-                <input
-                  type="text"
-                  value={editingProduct?.imageExtension || ""}
-                  onChange={(e) =>
-                    setEditingProduct({
-                      ...editingProduct,
-                      imageExtension: e.target.value,
-                    })
-                  }
-                  className="w-full border p-2 rounded-md"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Upload New Image
-                </label>
-                <input
-                  type="file"
-                  onChange={handleFileUpload}
-                  accept="image/*"
-                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <FaTimes />
+                  </button>
+                )}
               </div>
             </div>
-            <div className="flex gap-2 mt-6">
-              <button
-                onClick={handleSaveProduct}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 rounded-md"
-              >
-                Save Product
-              </button>
-              <button
-                onClick={() => setModalOpen(false)}
-                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md"
-              >
-                Cancel
-              </button>
+
+            {/* Category Filter */}
+            <div className="lg:w-72">
+              <div className="relative">
+                <FaFilter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full border-2 border-gray-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors appearance-none bg-white"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="mpt">Most Popular Tours</option>
+                  <option value="at">Airport Transfers</option>
+                  <option value="cse">Cruise Shore Excursions</option>
+                  <option value="ctp">Combo Tour Packages</option>
+                  <option value="egt">Exclusive Golf Tours</option>
+                  <option value="st">Shopping Tours</option>
+                  <option value="abc">Attractions / Beach / City Tours</option>
+                  <option value="edt">Eating / Dining Tours</option>
+                  <option value="ncb">Night Club / Bar</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* New Product Creation */}
-      <div className="mb-8 bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Create New Product</h2>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Category</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="border p-2 rounded-md"
-          >
-            <option value="mpt">Most Popular Tours</option>
-            <option value="at">Airport Transfers</option>
-            <option value="cse">Cruise Shore Excursions</option>
-            <option value="ctp">Combo Tour Packages</option>
-            <option value="egt">Exclusive Golf Tours</option>
-            <option value="st">Shopping Tours</option>
-            <option value="abc">Attractions / Beach / City Tours</option>
-            <option value="edt">Eating / Dining Tours</option>
-          </select>
-        </div>
-        <button
-          onClick={handleCreateProduct}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 mb-4 rounded-md"
-        >
-          Create New Product
-        </button>
+          {/* Results Summary */}
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <p className="text-sm text-gray-600">
+              Showing{" "}
+              <span className="font-semibold text-gray-900">
+                {filteredProducts.length}
+              </span>{" "}
+              of{" "}
+              <span className="font-semibold text-gray-900">
+                {productList.length}
+              </span>{" "}
+              products
+            </p>
 
-        {newProduct && (
-          <div className="border-t pt-4">
-            <h3 className="text-lg font-semibold mb-3">New Product Details</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
-                <input
-                  type="text"
-                  value={newProduct.title}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, title: e.target.value })
-                  }
-                  className="w-full border p-2 rounded-md"
-                  placeholder="Enter product title"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Description
-                </label>
-                <textarea
-                  value={newProduct.desc}
-                  onChange={(e) =>
-                    setNewProduct({ ...newProduct, desc: e.target.value })
-                  }
-                  className="w-full border p-2 rounded-md h-20"
-                  placeholder="Enter product description"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+            {(searchTerm || selectedCategory !== "all") && (
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("all");
+                }}
+                className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 px-4 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors"
+              >
+                <FaTimes />
+                Clear filters
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Create New Product Section */}
+        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl shadow-sm border border-emerald-200 p-6 mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <FaPlus className="text-emerald-600" />
+            Create New Tour
+          </h2>
+
+          <div className="flex flex-col sm:flex-row gap-4 items-end">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Category
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+              >
+                <option value="mpt">Most Popular Tours</option>
+                <option value="at">Airport Transfers</option>
+                <option value="cse">Cruise Shore Excursions</option>
+                <option value="ctp">Combo Tour Packages</option>
+                <option value="egt">Exclusive Golf Tours</option>
+                <option value="st">Shopping Tours</option>
+                <option value="abc">Attractions / Beach / City Tours</option>
+                <option value="edt">Eating / Dining Tours</option>
+              </select>
+            </div>
+            <button
+              onClick={handleCreateProduct}
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-3 rounded-xl transition-all duration-200 font-medium flex items-center gap-2 shadow-lg hover:shadow-xl"
+            >
+              <FaPlus />
+              Create Product
+            </button>
+          </div>
+
+          {/* New Product Form */}
+          {newProduct && (
+            <div className="mt-6 bg-white rounded-xl p-6 border-2 border-emerald-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                New Product Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    value={newProduct.title}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, title: e.target.value })
+                    }
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                    placeholder="Enter tour title"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={newProduct.desc}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, desc: e.target.value })
+                    }
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                    rows="3"
+                    placeholder="Enter tour description"
+                  />
+                </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Lowest Price
                   </label>
                   <input
@@ -642,12 +523,12 @@ const AdminPanel = () => {
                         priceLowest: e.target.value,
                       })
                     }
-                    className="w-full border p-2 rounded-md"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="0.00"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Highest Price
                   </label>
                   <input
@@ -660,39 +541,260 @@ const AdminPanel = () => {
                         priceHighest: e.target.value,
                       })
                     }
-                    className="w-full border p-2 rounded-md"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="0.00"
                   />
                 </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Upload Image
+                  </label>
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    accept="image/*"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                  />
+                </div>
               </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={handleSaveNewProduct}
+                  className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-6 py-3 rounded-xl transition-all font-medium"
+                >
+                  Save Product
+                </button>
+                <button
+                  onClick={() => setNewProduct(null)}
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-xl transition-all font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Products Grid */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">
+            All Tours ({filteredProducts.length})
+          </h2>
+
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                No tours found
+              </h3>
+              <p className="text-gray-500">
+                {searchTerm || selectedCategory !== "all"
+                  ? "Try adjusting your filters"
+                  : "Start by creating your first tour"}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product, index) => (
+                <div
+                  key={product.id + product.category + index}
+                  className="group bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:border-emerald-500 hover:shadow-xl transition-all duration-300"
+                >
+                  {/* Image */}
+                  <div className="relative h-48 overflow-hidden bg-gray-100">
+                    <img
+                      src={`/${product.id.split("-").shift()}/${product.id}.${
+                        product.imageExtension
+                      }`}
+                      alt={product.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 left-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-3 py-1 rounded-lg text-xs font-bold uppercase">
+                      {product.category}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {product.id}
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                      {product.title}
+                    </h3>
+                    <div className="mb-4">
+                      <span className="text-2xl font-bold text-emerald-600">
+                        ${product.priceLowest}
+                      </span>
+                      {product.priceHighest !== product.priceLowest && (
+                        <span className="text-sm text-gray-500 ml-1">
+                          - ${product.priceHighest}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEditProduct(product)}
+                        className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-3 rounded-xl transition-colors font-medium flex items-center justify-center gap-1"
+                      >
+                        <FaEdit />
+                        <span className="text-sm">Edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProduct(product.id)}
+                        className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded-xl transition-colors font-medium flex items-center justify-center gap-1"
+                      >
+                        <FaTrash />
+                        <span className="text-sm">Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Gallery Upload Section */}
+        <div className="mt-8">
+          <GalleryUpload />
+        </div>
+      </div>
+
+      {/* Edit Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="sticky top-0 bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-6 rounded-t-2xl">
+              <h2 className="text-2xl font-bold">Edit Tour</h2>
+              <p className="text-emerald-100 text-sm mt-1">
+                Update tour information and details
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">
-                  Upload Image
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={editingProduct?.title || ""}
+                  onChange={(e) =>
+                    setEditingProduct({
+                      ...editingProduct,
+                      title: e.target.value,
+                    })
+                  }
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={editingProduct?.desc || ""}
+                  onChange={(e) =>
+                    setEditingProduct({
+                      ...editingProduct,
+                      desc: e.target.value,
+                    })
+                  }
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                  rows="4"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Lowest Price
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editingProduct?.priceLowest || ""}
+                    onChange={(e) =>
+                      setEditingProduct({
+                        ...editingProduct,
+                        priceLowest: e.target.value,
+                      })
+                    }
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Highest Price
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editingProduct?.priceHighest || ""}
+                    onChange={(e) =>
+                      setEditingProduct({
+                        ...editingProduct,
+                        priceHighest: e.target.value,
+                      })
+                    }
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Image Extension
+                </label>
+                <input
+                  type="text"
+                  value={editingProduct?.imageExtension || ""}
+                  onChange={(e) =>
+                    setEditingProduct({
+                      ...editingProduct,
+                      imageExtension: e.target.value,
+                    })
+                  }
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Upload New Image
                 </label>
                 <input
                   type="file"
                   onChange={handleFileUpload}
                   accept="image/*"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
                 />
               </div>
             </div>
-            <button
-              onClick={handleSaveNewProduct}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 mt-4 rounded-md"
-            >
-              Save New Product
-            </button>
-            <button
-              onClick={() => setNewProduct(null)}
-              className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 mt-4 ml-2 rounded-md"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
-      </div>
 
-      <GalleryUpload />
+            <div className="flex gap-3 p-6 bg-gray-50 rounded-b-2xl">
+              <button
+                onClick={handleSaveProduct}
+                className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3 px-6 rounded-xl transition-all font-medium"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 px-6 rounded-xl transition-all font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
