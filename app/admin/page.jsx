@@ -95,6 +95,53 @@ const AdminPanel = () => {
     filterProducts();
   }, [searchTerm, selectedCategory, productList]);
 
+  // Get all possible price fields from ALL products (for new product creation)
+  const getAllPossiblePriceFields = () => {
+    const priceFields = new Set();
+
+    productList.forEach((product) => {
+      Object.keys(product).forEach((key) => {
+        if (
+          key.toLowerCase().includes("price") &&
+          key !== "priceLowest" &&
+          key !== "priceHighest"
+        ) {
+          priceFields.add(key);
+        }
+      });
+    });
+
+    return Array.from(priceFields).sort();
+  };
+
+  // Get price fields for a specific product (for editing)
+  const getProductPriceFields = (product) => {
+    if (!product) return [];
+
+    return Object.keys(product)
+      .filter(
+        (key) =>
+          key.toLowerCase().includes("price") &&
+          key !== "priceLowest" &&
+          key !== "priceHighest"
+      )
+      .sort();
+  };
+
+  // Initialize empty object for price fields (they'll be added as user fills them)
+  const initializeEmptyPriceFields = () => {
+    return {}; // Start with no price fields - they'll be added when user enters values
+  };
+
+  // Format price field names for display
+  const formatPriceFieldName = (fieldName) => {
+    return fieldName
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase())
+      .replace(/price/gi, "Price")
+      .trim();
+  };
+
   const checkMigrationStatus = async () => {
     try {
       const response = await axios.get("/api/migrate");
@@ -137,18 +184,15 @@ const AdminPanel = () => {
       parseInt(lastProduct?.id.split("-")[1] || 0) + 1
     }`;
 
+    const dynamicPrices = initializeEmptyPriceFields();
+
     const newProductObject = {
       id: newId,
       title: "",
       desc: "",
       priceLowest: "",
       priceHighest: "",
-      priceFalmouth: "",
-      priceLucea: "",
-      priceMobay: "",
-      priceNegril: "",
-      priceOchi: "",
-      priceRunaway: "",
+      ...dynamicPrices,
       category,
       imageExtension: "webp",
     };
@@ -174,7 +218,22 @@ const AdminPanel = () => {
 
   const handleSaveNewProduct = async () => {
     try {
-      await axios.post("/api/products", newProduct);
+      // Filter out empty price fields to keep database clean
+      const cleanProduct = { ...newProduct };
+
+      // Remove price fields that are empty or just whitespace
+      getAllPossiblePriceFields().forEach((field) => {
+        if (
+          !cleanProduct[field] ||
+          cleanProduct[field].toString().trim() === ""
+        ) {
+          delete cleanProduct[field];
+        }
+      });
+
+      console.log("Creating product with clean data:", cleanProduct);
+
+      await axios.post("/api/products", cleanProduct);
       await fetchProducts();
       setNewProduct(null);
       alert("Product created successfully!");
@@ -509,6 +568,15 @@ const AdminPanel = () => {
                     placeholder="Enter tour description"
                   />
                 </div>
+
+                {/* Basic Price Fields Section */}
+                <div className="md:col-span-2 mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+                    <FaDollarSign className="mr-2 text-emerald-600" />
+                    Basic Pricing
+                  </h3>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Lowest Price
@@ -545,6 +613,41 @@ const AdminPanel = () => {
                     placeholder="0.00"
                   />
                 </div>
+
+                {/* Location-Specific Pricing Section */}
+                <div className="md:col-span-2 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+                    <FaTags className="mr-2 text-emerald-600" />
+                    Location-Specific Pricing
+                    <span className="ml-2 text-sm text-gray-500 font-normal">
+                      ({getAllPossiblePriceFields().length} locations available
+                      - only filled fields will be saved)
+                    </span>
+                  </h3>
+                </div>
+
+                {/* Dynamic Price Fields for New Product - ALL possible locations */}
+                {getAllPossiblePriceFields().map((priceField) => (
+                  <div key={priceField}>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {formatPriceFieldName(priceField)}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newProduct[priceField] || ""}
+                      onChange={(e) =>
+                        setNewProduct({
+                          ...newProduct,
+                          [priceField]: e.target.value,
+                        })
+                      }
+                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                      placeholder="0.00"
+                    />
+                  </div>
+                ))}
+
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Upload Image
@@ -557,6 +660,42 @@ const AdminPanel = () => {
                   />
                 </div>
               </div>
+
+              {/* Debug Preview - Only fields that will be saved */}
+              <div className="bg-gray-50 p-4 rounded-lg mt-4">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Fields that will be saved:
+                </h4>
+                <div className="text-xs text-gray-600">
+                  {getAllPossiblePriceFields().filter(
+                    (field) =>
+                      newProduct[field] &&
+                      newProduct[field].toString().trim() !== ""
+                  ).length > 0 ? (
+                    <div className="grid grid-cols-2 gap-1">
+                      {getAllPossiblePriceFields()
+                        .filter(
+                          (field) =>
+                            newProduct[field] &&
+                            newProduct[field].toString().trim() !== ""
+                        )
+                        .map((field) => (
+                          <div key={field} className="flex justify-between">
+                            <span>{formatPriceFieldName(field)}:</span>
+                            <span className="text-emerald-600">
+                              ${newProduct[field]}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic">
+                      No location prices set yet
+                    </p>
+                  )}
+                </div>
+              </div>
+
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={handleSaveNewProduct}
@@ -746,6 +885,45 @@ const AdminPanel = () => {
                     className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
                   />
                 </div>
+              </div>
+
+              {/* Dynamic Price Fields */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                  <FaDollarSign className="mr-2 text-emerald-600" />
+                  Location-Specific Pricing
+                  <span className="ml-2 text-sm text-gray-500 font-normal">
+                    ({getProductPriceFields(editingProduct).length} locations)
+                  </span>
+                </h3>
+                {getProductPriceFields(editingProduct).length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {getProductPriceFields(editingProduct).map((priceField) => (
+                      <div key={priceField}>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {formatPriceFieldName(priceField)}
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={editingProduct?.[priceField] || ""}
+                          onChange={(e) =>
+                            setEditingProduct({
+                              ...editingProduct,
+                              [priceField]: e.target.value,
+                            })
+                          }
+                          className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 italic">
+                    This product has no location-specific pricing fields.
+                  </p>
+                )}
               </div>
 
               <div>
