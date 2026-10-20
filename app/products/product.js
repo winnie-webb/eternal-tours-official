@@ -82,7 +82,3 @@ export async function filterProductById(id) {
 export function clearProductsCache() {
   cachedProducts = null;
 }
-
-// Legacy exports for backwards compatibility (deprecated)
-import productsJson from "../data/products.json";
-export { productsJson as products };

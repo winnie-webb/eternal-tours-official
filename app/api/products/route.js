@@ -1,5 +1,7 @@
 import admin from "../../../firebaseAdmin";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
+import { PRODUCTS_TAG } from "@/lib/products.server";
 
 const db = admin.firestore();
 
@@ -50,7 +52,9 @@ export async function POST(request) {
     const existingProduct = await db.collection("products").doc(id).get();
     if (existingProduct.exists) {
       return NextResponse.json(
-        { error: "Product with this ID already exists" },
+        {
+          error: `Product ${id} already exists — refresh the admin page and try again`,
+        },
         { status: 409 }
       );
     }
@@ -64,6 +68,7 @@ export async function POST(request) {
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
+    revalidateTag(PRODUCTS_TAG);
 
     return NextResponse.json(
       { message: "Product created successfully", product: { id, ...body } },

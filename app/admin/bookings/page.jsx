@@ -1,226 +1,254 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { collection, doc, updateDoc, onSnapshot } from "firebase/firestore";
-import toast from "react-hot-toast";
-import { auth, db, messaging, onMessage } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import toast from "react-hot-toast";
+import { FiSearch, FiX } from "react-icons/fi";
+import { auth, db, messaging, onMessage } from "@/firebase";
+import getPickupTitle from "@/app/utils/getPickupTitle";
+import { formatMoney } from "@/lib/catalog";
+
+const STATUSES = ["Pending", "Payment Confirmed", "Completed", "Cancelled"];
+const STATUS_STYLE = {
+  Pending: "bg-sun-100 text-sunset-600",
+  "Payment Confirmed": "bg-jett-50 text-jett-700",
+  Completed: "bg-sand-200 text-ink-soft",
+  Cancelled: "bg-red-50 text-red-700",
+};
+const TRANSFER_LABELS = {
+  PickUp: "Arriving (airport → stay)",
+  DropOff: "Departing (stay → airport)",
+  PickUpAndDropOff: "Round trip",
+};
+
+// New bookings are saved as "pending"; the admin writes "Pending" etc.
+const normalizeStatus = (s) => STATUSES.find((x) => x.toLowerCase() === String(s || "").toLowerCase()) || "Pending";
+
+const toDate = (ts) => (ts?.toDate ? ts.toDate() : null);
 
 const BookingsPage = () => {
   const [bookings, setBookings] = useState([]);
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const router = useRouter();
-  useEffect(() => {
-    if (messaging) {
-      onMessage(messaging, (payload) => {
-        console.log("Foreground message received: ", payload);
-        const { title, body } = payload.notification;
 
-        if (Notification.permission === "granted") {
-          new Notification(title, {
-            body: body,
-          });
-        }
-      });
-    }
+  useEffect(() => {
+    if (!messaging) return;
+    onMessage(messaging, (payload) => {
+      const { title, body } = payload.notification;
+      toast(title + " — " + body);
+      if (Notification.permission === "granted") new Notification(title, { body });
+    });
   }, []);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/login"); // Redirect to login page if not authenticated
-      }
+      if (!user) router.push("/login");
     });
-
     return () => unsubscribe();
   }, [router]);
 
   useEffect(() => {
-    const bookingsCollection = collection(db, "bookings");
-    const unsubscribe = onSnapshot(bookingsCollection, (snapshot) => {
-      const bookingsList = snapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        .sort((a, b) => b.timestamp.toDate() - a.timestamp.toDate());
-      setBookings(bookingsList);
+    const unsubscribe = onSnapshot(collection(db, "bookings"), (snapshot) => {
+      const list = snapshot.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        // A just-created booking has no server timestamp yet; keep it on top
+        .sort((a, b) => (toDate(b.timestamp) || new Date()) - (toDate(a.timestamp) || new Date()));
+      setBookings(list);
     });
-
     return () => unsubscribe();
   }, []);
 
+  const counts = useMemo(() => {
+    const c = { all: bookings.length };
+    bookings.forEach((b) => {
+      const s = normalizeStatus(b.status);
+      c[s] = (c[s] || 0) + 1;
+    });
+    return c;
+  }, [bookings]);
+
+  const visible = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return bookings.filter((b) => {
+      if (statusFilter !== "all" && normalizeStatus(b.status) !== statusFilter) return false;
+      if (!term) return true;
+      return [b.orderNumber, b.name, b.email, b.phone_number, b.tourName]
+        .some((v) => String(v || "").toLowerCase().includes(term));
+    });
+  }, [bookings, search, statusFilter]);
+
   const handleStatusUpdate = async (bookingId, newStatus) => {
-    const bookingDocRef = doc(db, "bookings", bookingId);
-    await updateDoc(bookingDocRef, { status: newStatus });
-    toast.success(`Booking status updated to ${newStatus}`);
-  };
-
-  const handleCancelBooking = async (bookingId) => {
-    const bookingDocRef = doc(db, "bookings", bookingId);
-    await updateDoc(bookingDocRef, { status: "Cancelled" });
-    toast.error("Booking has been cancelled.");
-    setIsModalOpen(false);
-  };
-
-  const openModal = (booking) => {
-    setSelectedBooking(booking);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
+    await updateDoc(doc(db, "bookings", bookingId), { status: newStatus });
+    setSelected((s) => (s && s.id === bookingId ? { ...s, status: newStatus } : s));
+    toast.success(`Marked ${newStatus.toLowerCase()}`);
   };
 
   return (
-    <div className="container mx-auto min-h-[100vh] p-4">
-      <h1 className="text-3xl font-bold text-indigo-600 mb-6">Bookings</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {bookings.map((booking) => (
-          <div
-            key={booking.id}
-            className="p-6 bg-white shadow-lg rounded-lg hover:bg-indigo-50 transition cursor-pointer"
-            onClick={() => openModal(booking)}
-          >
-            <h2 className="text-xl font-semibold text-gray-800">
-              Order #{booking.orderNumber}
-            </h2>
-            <p className="text-gray-600">
-              <strong>Name:</strong> {booking.name}
-            </p>
-            <p className="text-gray-600">
-              <strong>Status:</strong> {booking.status}
-            </p>
-          </div>
-        ))}
+    <div>
+      <p className="eyebrow">Bookings</p>
+      <h1 className="mt-1 text-4xl tracking-tight">Reservations</h1>
+      <p className="mt-1 text-sm text-ink-muted">Live — new bookings appear here as they come in.</p>
+
+      <div className="mt-8 flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="relative lg:w-80">
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Order #, name, email, phone, tour"
+            className="field !rounded-full !py-2.5 !pl-11"
+          />
+        </div>
+        <div className="scroll-row !mx-0 !gap-2 !px-0 !pb-0">
+          {["all", ...STATUSES].map((s) => (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                statusFilter === s ? "border-ink bg-ink text-white" : "border-sand-300 bg-white hover:border-ink/40"
+              }`}
+            >
+              {s === "all" ? "All" : s}
+              <span className={`font-mono text-[11px] ${statusFilter === s ? "text-sun-300" : "text-ink-muted"}`}>
+                {counts[s] || 0}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Modal for Booking Details */}
-      <Transition appear show={isModalOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+      <div className="mt-6 overflow-hidden rounded-3xl bg-white ring-1 ring-sand-200">
+        <div className="hidden grid-cols-[130px_1.2fr_2fr_110px_150px] gap-4 border-b border-sand-200 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted md:grid">
+          <span>Order</span><span>Guest</span><span>Trip</span><span className="text-right">Total</span><span>Status</span>
+        </div>
+        {visible.length === 0 ? (
+          <p className="p-10 text-center text-ink-muted">No bookings match.</p>
+        ) : (
+          <ul className="divide-y divide-sand-200">
+            {visible.map((b) => {
+              const status = normalizeStatus(b.status);
+              const when = toDate(b.timestamp);
+              return (
+                <li key={b.id}>
+                  <button
+                    onClick={() => setSelected(b)}
+                    className="grid w-full grid-cols-[1fr_auto] gap-x-4 gap-y-1 px-5 py-4 text-left transition hover:bg-sand-50 md:grid-cols-[130px_1.2fr_2fr_110px_150px] md:items-center"
                   >
-                    Booking Details
-                  </Dialog.Title>
+                    <span className="font-mono text-sm font-semibold">
+                      {b.orderNumber || "—"}
+                      <span className="block text-[11px] font-normal text-ink-muted">
+                        {when ? when.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" }) : "just now"}
+                      </span>
+                    </span>
+                    <span className="order-3 min-w-0 md:order-none">
+                      <span className="block truncate font-semibold">{b.name}</span>
+                      <span className="block truncate text-xs text-ink-muted">{b.email}</span>
+                    </span>
+                    <span className="order-4 line-clamp-1 text-sm text-ink-soft md:order-none">{b.tourName}</span>
+                    <span className="text-right font-mono text-sm font-semibold">${formatMoney(b.total_price)}</span>
+                    <span className="order-2 md:order-none">
+                      <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLE[status]}`}>{status}</span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
 
-                  {selectedBooking && (
-                    <>
-                      <div className="mt-4">
-                        <p>
-                          <strong>Order Number:</strong>{" "}
-                          {selectedBooking.orderNumber}
-                        </p>
-                        <p>
-                          <strong>Name:</strong> {selectedBooking.name}
-                        </p>
-                        <p>
-                          <strong>Email:</strong> {selectedBooking.email}
-                        </p>
-                        <p>
-                          <strong>Phone:</strong> {selectedBooking.phone_number}
-                        </p>
-                        <p>
-                          <strong>Tour:</strong> {selectedBooking.tourName}
-                        </p>
-                        <p>
-                          <strong>Pickup Location:</strong>{" "}
-                          {selectedBooking.pickup_location}
-                        </p>
-                        <p>
-                          <strong>Adults:</strong> {selectedBooking.adults}
-                        </p>
-                        <p>
-                          <strong>Kids:</strong> {selectedBooking.kids}
-                        </p>
-                        <p>
-                          <strong>Total Price:</strong> $
-                          {selectedBooking.total_price}
-                        </p>
-                        <p>
-                          <strong>Status:</strong> {selectedBooking.status}
-                        </p>
-                      </div>
-
-                      <div className="mt-6">
-                        <label
-                          htmlFor="status"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Update Status:
-                        </label>
-                        <select
-                          id="status"
-                          className="w-full border border-gray-300 p-2 rounded-md mt-2"
-                          value={selectedBooking.status}
-                          onChange={(e) =>
-                            handleStatusUpdate(
-                              selectedBooking.id,
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Payment Confirmed">
-                            Payment Confirmed
-                          </option>
-                          <option value="Completed">Completed</option>
-                        </select>
-                      </div>
-
-                      <div className="mt-6 flex justify-between">
-                        <button
-                          className="px-4 py-2 bg-red-500 text-white rounded-md"
-                          onClick={() =>
-                            handleCancelBooking(selectedBooking.id)
-                          }
-                        >
-                          Cancel Booking
-                        </button>
-                        <button
-                          className="px-4 py-2 bg-indigo-600 text-white rounded-md"
-                          onClick={closeModal}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
+      {selected && (
+        <BookingDrawer booking={selected} onClose={() => setSelected(null)} onStatus={handleStatusUpdate} />
+      )}
     </div>
   );
 };
+
+function BookingDrawer({ booking: b, onClose, onStatus }) {
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const isTransfer = Boolean(b.transfer_type);
+  const status = normalizeStatus(b.status);
+  const rows = [
+    ["Guest", b.name],
+    ["Email", b.email && <a className="text-jett-700 underline" href={`mailto:${b.email}`}>{b.email}</a>],
+    ["Phone", b.phone_number && <a className="text-jett-700 underline" href={`tel:${b.phone_number}`}>{b.phone_number}</a>],
+    ["Adults / kids", `${b.adults ?? 0} / ${b.kids ?? 0}`],
+    ["Price per person", b.price_per_person && `$${formatMoney(b.price_per_person)}`],
+    ["Wants to pay online", b.pay_online],
+    ...(isTransfer
+      ? [
+          ["Trip", TRANSFER_LABELS[b.transfer_type] || b.transfer_type],
+          ["Staying at", b.place_of_stay?.replace("Price", "").trim()],
+          ["Address", b.pickup_dropoff],
+          ["Arrival", [b.pickup_date, b.arrival_time, b.airlines_name].filter(Boolean).join(" · ")],
+          ["Departure", [b.departure_date, b.departure_time, b.departure_airlines_name].filter(Boolean).join(" · ")],
+          ["Pick-up time", b.pickup_time],
+        ]
+      : [
+          ["Pick-up area", b.pickup_dropoff && getPickupTitle(b.pickup_dropoff)],
+          ["Pick-up place", b.pickup_location],
+          ["Date", b.pickup_date],
+          ["Time", b.pickup_time],
+        ]),
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end bg-ink/50 backdrop-blur-sm" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="flex h-full w-full max-w-lg animate-rise flex-col bg-white shadow-lift">
+        <div className="flex items-start justify-between bg-ink px-6 py-5 text-white">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-sun-300">Order</p>
+            <p className="font-mono text-2xl font-semibold">{b.orderNumber}</p>
+            <p className="mt-1 text-sm text-sand-300">{b.tourName}</p>
+          </div>
+          <button onClick={onClose} className="rounded-full p-2 text-xl text-sand-300 hover:bg-white/10 hover:text-white" aria-label="Close">
+            <FiX />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">Total fare</p>
+          <p className="font-display text-4xl">${formatMoney(b.total_price)}</p>
+          <dl className="mt-6 divide-y divide-sand-200">
+            {rows
+              .filter(([, v]) => v)
+              .map(([label, value]) => (
+                <div key={label} className="grid grid-cols-[130px_1fr] gap-3 py-3 text-sm">
+                  <dt className="text-ink-muted">{label}</dt>
+                  <dd className="break-words font-medium">{value}</dd>
+                </div>
+              ))}
+          </dl>
+        </div>
+        <div className="border-t border-sand-200 px-6 py-5">
+          <p className="field-label">Status</p>
+          <div className="grid grid-cols-2 gap-2">
+            {STATUSES.map((s) => (
+              <button
+                key={s}
+                onClick={() => {
+                  if (s === "Cancelled" && !confirm("Cancel this booking?")) return;
+                  onStatus(b.id, s);
+                }}
+                className={`rounded-xl border px-3 py-2.5 text-sm font-semibold transition ${
+                  status === s ? "border-ink bg-ink text-white" : "border-sand-300 hover:border-ink/40"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default BookingsPage;

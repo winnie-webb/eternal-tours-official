@@ -1,31 +1,28 @@
-import admin from "@/firebaseAdmin"; // Adjust path to your firebaseAdmin.js file
+import admin from "@/firebaseAdmin";
 import { NextResponse } from "next/server";
 
-// Named export for the POST method
-export async function POST(req) {
+// Called by the booking forms after a booking is saved. Tokens and wording
+// are decided here, not by the caller, so this can't be used to push
+// arbitrary messages to admin devices.
+export async function POST() {
   try {
-    const body = await req.json();
-    console.log(body);
+    const snapshot = await admin.firestore().collection("users").get();
+    const tokens = snapshot.docs.flatMap((doc) =>
+      Array.isArray(doc.data().tokens) ? doc.data().tokens : []
+    );
+    if (tokens.length === 0) {
+      return NextResponse.json({ success: true, sent: 0 });
+    }
 
-    // Create an array of promises for each token
-    const sendNotifications = body.tokens.map(async (token) => {
-      const message = {
-        notification: {
-          title: body.title,
-          body: body.body,
-        },
-        token: token, // The user's FCM token
-      };
-
-      // Send the message and return the response
-      return await admin.messaging().send(message);
+    const result = await admin.messaging().sendEachForMulticast({
+      notification: {
+        title: "New Booking Alert!",
+        body: "Please check the admin panel.",
+      },
+      tokens,
     });
 
-    // Wait for all notifications to be sent
-    const results = await Promise.all(sendNotifications);
-    console.log("All notifications sent:", results);
-
-    return NextResponse.json({ success: true, message: "Notifications sent!" });
+    return NextResponse.json({ success: true, sent: result.successCount });
   } catch (error) {
     console.error("Error sending notification:", error.message);
     return NextResponse.json(

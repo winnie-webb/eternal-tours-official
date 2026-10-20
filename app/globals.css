@@ -2,23 +2,136 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    font-optical-sizing: auto;
+  }
+  ::selection {
+    @apply bg-sun-300 text-ink;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-jett-500 ring-offset-2 ring-offset-white;
+  }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: inherit;
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-jett-600;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-ink text-sand-50 hover:bg-jett-600;
+  }
+  .btn-sun {
+    @apply btn bg-sun-400 text-ink hover:bg-sun-300;
+  }
+  .btn-ghost {
+    @apply btn border border-ink/15 bg-white/60 text-ink hover:border-ink/40 hover:bg-white;
+  }
+  .btn-danger {
+    @apply btn bg-red-50 text-red-700 hover:bg-red-100;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-[13px] font-semibold text-ink-soft;
+  }
+  .field {
+    @apply w-full rounded-xl border border-sand-300 bg-white px-4 py-3 text-[15px] text-ink placeholder:text-ink-muted/60 transition focus:border-jett-500 focus:outline-none focus:ring-4 focus:ring-jett-100;
+  }
+  .field-hint {
+    @apply mt-1 text-xs text-ink-muted;
+  }
+
+  .card {
+    @apply rounded-3xl border border-sand-200 bg-white shadow-ticket;
+  }
+
+  /* Category code chip — styled like an airport code on a boarding pass */
+  .code-chip {
+    @apply inline-flex items-center rounded-md bg-ink px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-widest text-sun-300;
+  }
+
+  /* The ticket motif: a dashed tear line with half-circle notches. Put it
+     between two parts of a .card; set --notch to the surface behind it. */
+  .perforation {
+    --notch: #fff;
+    @apply relative h-0 border-t-2 border-dashed border-sand-300;
+  }
+  .perforation::before,
+  .perforation::after {
+    content: "";
+    @apply absolute top-1/2 h-6 w-6 -translate-y-1/2 rounded-full;
+    background: var(--notch);
+  }
+  .perforation::before {
+    left: -12px;
+  }
+  .perforation::after {
+    right: -12px;
+  }
+
+  /* Vertical tear for side-by-side ticket stubs */
+  .perforation-y {
+    --notch: #fff;
+    @apply relative w-0 border-l-2 border-dashed border-sand-300;
+  }
+  .perforation-y::before,
+  .perforation-y::after {
+    content: "";
+    @apply absolute left-1/2 h-6 w-6 -translate-x-1/2 rounded-full;
+    background: var(--notch);
+  }
+  .perforation-y::before {
+    top: -12px;
+  }
+  .perforation-y::after {
+    bottom: -12px;
+  }
+
+  .scroll-row {
+    @apply -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto px-4 pb-6 pt-1 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:scroll-px-8 lg:px-8;
+    scrollbar-width: none;
+  }
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
 }
-header a:hover {
-  text-decoration: underline;
-  text-underline-offset: 8px;
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

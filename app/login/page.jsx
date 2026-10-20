@@ -46,10 +46,15 @@ const Login = () => {
         throw new Error("Authentication failed");
       }
 
-      // Register service worker and save the FCM token for notifications
-      await registerServiceWorker();
-      const fcmToken = await requestPermission();
-      await saveAdminToken(user, fcmToken);
+      // Booking alerts are optional — a blocked notification prompt must not
+      // turn a successful sign-in into an error.
+      try {
+        await registerServiceWorker();
+        const fcmToken = await requestPermission();
+        await saveAdminToken(user, fcmToken);
+      } catch (notifyError) {
+        console.warn("Booking notifications not enabled:", notifyError.message);
+      }
 
       // Redirect to the admin page after successful authentication
       router.push("/admin");
@@ -61,38 +66,51 @@ const Login = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <main className="grid min-h-screen place-items-center bg-ink px-4">
+      <div aria-hidden className="pointer-events-none fixed -right-32 -top-32 h-96 w-96 rounded-full bg-gradient-to-br from-sun-400 to-sunset-500" />
       <form
-        className="p-6 bg-white shadow-md rounded-lg"
+        className="relative w-full max-w-sm overflow-hidden rounded-3xl bg-sand-50 shadow-lift"
         onSubmit={handleLogin}
       >
-        <h1 className="text-2xl font-bold mb-4">Admin Login</h1>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <input
-          type="email"
-          placeholder="Email"
-          className="block w-full mb-4 p-2 border rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="block w-full mb-4 p-2 border rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full p-2 bg-emerald-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? "Logging in..." : "Login"}
-        </button>
+        <div className="flex items-center justify-between bg-sand-200 px-6 py-3 font-mono text-[10px] uppercase tracking-[0.25em] text-ink-muted">
+          <span>Crew only</span>
+          <span>JETT · Admin</span>
+        </div>
+        <div className="space-y-4 p-6 sm:p-8">
+          <h1 className="text-3xl tracking-tight">Welcome back.</h1>
+          {error && (
+            <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
+          )}
+          <div>
+            <label htmlFor="login-email" className="field-label">Email</label>
+            <input
+              id="login-email"
+              type="email"
+              autoComplete="username"
+              className="field"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="login-password" className="field-label">Password</label>
+            <input
+              id="login-password"
+              type="password"
+              autoComplete="current-password"
+              className="field"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" disabled={isLoading} className="btn-primary w-full !py-3.5">
+            {isLoading ? "Signing in…" : "Sign in"}
+          </button>
+        </div>
       </form>
-    </div>
+    </main>
   );
 };
 

@@ -1,66 +1,87 @@
-import Category from "@/app/components/Category";
-import React from "react";
-import getTitleFromType from "../getTitleFromType";
+import Link from "next/link";
+import { FiArrowLeft } from "react-icons/fi";
+import { CategoryGrid } from "@/app/components/Category";
+import { CATEGORIES, getCategory } from "@/lib/catalog";
+import { getProducts } from "@/lib/products.server";
 
-// Server-side function to fetch products
-async function getProducts() {
-  try {
-    const baseUrl = "https://jamaicaeternaltours.com";
-
-    const response = await fetch(`${baseUrl}/api/products`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch products");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    // Fallback to JSON import for development/build time
-    const products = await import("@/app/data/products.json");
-    return products.default || [];
-  }
-}
+// Admin saves refresh these instantly (revalidateTag); this is the backstop.
+export const revalidate = 300;
 
 export async function generateStaticParams() {
-  try {
-    const products = await getProducts();
-    const uniqueCategories = [
-      ...new Set(products.map((product) => product.category)),
-    ];
-    return uniqueCategories.map((category) => ({
-      type: category,
-    }));
-  } catch (error) {
-    // Fallback to static categories
-    return [
-      { type: "mpt" },
-      { type: "at" },
-      { type: "cse" },
-      { type: "ctp" },
-      { type: "egt" },
-      { type: "st" },
-      { type: "abc" },
-      { type: "edt" },
-    ];
-  }
+  return CATEGORIES.map((c) => ({ type: c.code }));
+}
+
+export async function generateMetadata({ params }) {
+  const category = getCategory(params.type);
+  return {
+    title: `${category.title} · Jamaica Eternal Tours`,
+    description: category.blurb,
+  };
 }
 
 async function page({ params }) {
   const { type } = params;
-  const products = await getProducts();
-  const filteredProducts = products.filter(
-    (product) => product.category === type
-  );
+  const category = getCategory(type);
+  const products = (await getProducts()).filter((p) => p.category === type);
+  const from = products.length
+    ? Math.min(...products.map((p) => parseFloat(p.priceLowest) || Infinity))
+    : null;
 
   return (
-    <Category
-      title={getTitleFromType(type)}
-      data={filteredProducts}
-      itemsPerPage={3}
-    />
+    <main>
+      <section className="container-x pb-12 pt-8">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-ink-muted hover:text-ink">
+          <FiArrowLeft /> All destinations
+        </Link>
+        <div className="mt-8 grid items-end gap-8 lg:grid-cols-[1fr_auto]">
+          <div>
+            <p className="font-mono text-6xl font-semibold uppercase leading-none tracking-tight text-jett-600 sm:text-8xl">
+              {type}
+            </p>
+            <h1 className="mt-4 text-balance text-4xl tracking-tight sm:text-6xl">{category.title}</h1>
+            <p className="mt-4 max-w-xl text-lg text-ink-muted">{category.blurb}</p>
+          </div>
+          {products.length > 0 && (
+            <dl className="flex gap-8 rounded-3xl bg-white px-6 py-4 shadow-ticket ring-1 ring-sand-200">
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">Trips</dt>
+                <dd className="font-display text-3xl">{products.length}</dd>
+              </div>
+              {isFinite(from) && (
+                <div>
+                  <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">From</dt>
+                  <dd className="font-display text-3xl">${from}</dd>
+                </div>
+              )}
+            </dl>
+          )}
+        </div>
+
+        {/* Hop between categories */}
+        <nav className="scroll-row mt-10 !gap-2 !pb-0" aria-label="Categories">
+          {CATEGORIES.map((c) => (
+            <Link
+              key={c.code}
+              href={`/category/${c.code}`}
+              className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                c.code === type
+                  ? "border-ink bg-ink text-sand-50"
+                  : "border-ink/10 bg-white hover:border-ink/40"
+              }`}
+            >
+              <span className={`font-mono text-[10px] uppercase ${c.code === type ? "text-sun-300" : "text-ink-muted"}`}>
+                {c.code}
+              </span>
+              {c.short}
+            </Link>
+          ))}
+        </nav>
+      </section>
+
+      <section className="container-x">
+        <CategoryGrid products={products} />
+      </section>
+    </main>
   );
 }
 

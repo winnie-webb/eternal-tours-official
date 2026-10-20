@@ -5,8 +5,6 @@ import {
   doc,
   setDoc,
   getDoc,
-  getDocs,
-  collection,
   arrayUnion,
 } from "firebase/firestore";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
@@ -35,22 +33,6 @@ export const saveAdminToken = async (user, token) => {
     const adminRef = doc(db, "users", user.uid);
     await setDoc(adminRef, { tokens: arrayUnion(token) }, { merge: true }); // Add the token without overwriting
   }
-};
-
-// Retrieve admin token from Firestore
-export const getAllAdminTokens = async () => {
-  const tokens = [];
-  const usersCollection = collection(db, "users");
-  const snapshot = await getDocs(usersCollection);
-
-  snapshot.forEach((doc) => {
-    const userData = doc.data();
-    if (userData.tokens && Array.isArray(userData.tokens)) {
-      tokens.push(...userData.tokens); // Spread the tokens to merge into a single array
-    }
-  });
-
-  return tokens;
 };
 
 // Register service worker and request notification permission

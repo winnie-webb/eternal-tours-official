@@ -1,107 +1,118 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { notFound } from "next/navigation";
+import { FiArrowLeft } from "react-icons/fi";
 import BookingForm from "./BookingForm/BookingForm";
+import TicketCard from "@/app/components/TicketCard";
+import { formatMoney, getCategory, productImage, sortByPrice } from "@/lib/catalog";
+import { getProduct, getProducts } from "@/lib/products.server";
 
-// Server-side function to fetch products
-async function getProducts() {
-  try {
-    const baseUrl = "https://jamaicaeternaltours.com";
-
-    const response = await fetch(`${baseUrl}/api/products`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch products");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    // Fallback to JSON import for development/build time
-    const products = await import("@/app/data/products.json");
-    return products.default || [];
-  }
-}
-
-// Server-side function to fetch single product
-async function getProduct(id) {
-  try {
-    const baseUrl = "https://jamaicaeternaltours.com";
-
-    const response = await fetch(`${baseUrl}/api/products/${id}`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch product");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching product:", error);
-    // Fallback to finding in local JSON
-    const products = await import("@/app/data/products.json");
-    const productArray = products.default || [];
-    return productArray.find((product) => product.id === id);
-  }
-}
+// Admin saves refresh these instantly (revalidateTag); this is the backstop.
+export const revalidate = 300;
 
 export async function generateStaticParams() {
-  try {
-    const products = await getProducts();
-    return products.map((product) => ({
-      id: product.id,
-    }));
-  } catch (error) {
-    console.error("Error in generateStaticParams:", error);
-    return [];
-  }
+  const products = await getProducts();
+  return products.map((product) => ({ id: product.id }));
+}
+
+export async function generateMetadata({ params }) {
+  const tour = await getProduct(params.id);
+  if (!tour) return { title: "Tour not found · Jamaica Eternal Tours" };
+  return {
+    title: `${tour.title} · Jamaica Eternal Tours`,
+    description:
+      tour.desc ||
+      `Private ${getCategory(tour.category).title.toLowerCase()} in Jamaica from $${formatMoney(tour.priceLowest)} per person.`,
+  };
 }
 
 async function page({ params }) {
-  const { id } = params;
-  const tour = await getProduct(id);
+  const tour = await getProduct(params.id);
+  if (!tour) notFound();
 
-  if (!tour) {
-    return (
-      <section className="p-4 md:p-10 w-[99%] xl:w-[80%] 2xl:w-[60%] mx-auto">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            Tour not found
-          </h1>
-          <Link href="/" className="text-emerald-600 hover:underline">
-            Return to home page
-          </Link>
-        </div>
-      </section>
-    );
-  }
+  const category = getCategory(tour.category);
+  const related = sortByPrice(
+    (await getProducts()).filter((p) => p.category === tour.category && p.id !== tour.id)
+  ).slice(0, 3);
+  const isTransfer = tour.category === "at";
 
   return (
-    <section className="p-4 md:p-10 w-[99%] xl:w-[80%] 2xl:w-[60%]  mx-auto">
-      <div className="relative flex flex-row md:flex-row cursor-pointer">
-        <div className="relative h-48 w-full md:h-60 xl:h-80 flex-1 overflow-hidden">
-          <Image
-            className="object-fill object-center"
-            src={`/${tour.id.split("-").shift()}/${tour.id}.${
-              tour.imageExtension || "webp"
-            }`}
-            alt={tour.title}
-            fill={true}
-          />
+    <main>
+      <section className="container-x pt-6">
+        <Link
+          href={`/category/${tour.category}`}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-ink-muted hover:text-ink"
+        >
+          <FiArrowLeft /> {category.title}
+        </Link>
+
+        <div className="mt-6 grid items-center gap-8 lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-14">
+          <div className="relative aspect-square w-full overflow-hidden rounded-[2rem] bg-sand-200 shadow-ticket ring-1 ring-sand-200">
+            <Image
+              src={productImage(tour)}
+              alt={tour.title}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 420px"
+              className="object-cover"
+            />
+          </div>
+          <div>
+            <div className="flex items-center gap-3">
+              <span className="code-chip">{tour.category}</span>
+              <span className="eyebrow !text-ink-muted">{category.title}</span>
+            </div>
+            <h1 className="mt-4 text-balance text-4xl leading-[1.05] tracking-tight sm:text-5xl">
+              {tour.title}
+            </h1>
+            {tour.desc && (
+              <p className="mt-5 max-w-2xl whitespace-pre-line text-lg leading-relaxed text-ink-muted">
+                {tour.desc}
+              </p>
+            )}
+            <dl className="mt-8 flex flex-wrap gap-3">
+              <div className="rounded-2xl bg-white px-5 py-3 ring-1 ring-sand-200">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">From</dt>
+                <dd className="font-display text-3xl">
+                  ${formatMoney(tour.priceLowest)}
+                  <span className="ml-1 font-sans text-sm text-ink-muted">/ person</span>
+                </dd>
+              </div>
+              <div className="rounded-2xl bg-white px-5 py-3 ring-1 ring-sand-200">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">Vehicle</dt>
+                <dd className="mt-1 font-semibold">Private, just your group</dd>
+              </div>
+              <div className="rounded-2xl bg-white px-5 py-3 ring-1 ring-sand-200">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">Pick-up</dt>
+                <dd className="mt-1 font-semibold">
+                  {isTransfer ? "Arrivals hall or your lobby" : "Your hotel lobby or port"}
+                </dd>
+              </div>
+            </dl>
+          </div>
         </div>
-        <div className="mt-2 p-2 flex-1">
-          <h3 className="text-base  font-bold">{tour.title}</h3>
-          <p className="my-1 text-emerald-600 font-semibold">
-            Starting at ${tour.priceLowest}
-          </p>
-          <p className=" font-semibold">(Per Person)</p>
-        </div>
-      </div>
-      <BookingForm tour={tour}></BookingForm>
-    </section>
+      </section>
+
+      <section className="container-x mt-14" id="book">
+        <p className="eyebrow">Book</p>
+        <h2 className="mb-8 mt-2 text-3xl tracking-tight sm:text-4xl">
+          {isTransfer ? "Reserve your ride" : "Reserve your day out"}
+        </h2>
+        <BookingForm tour={tour} />
+      </section>
+
+      {related.length > 0 && (
+        <section className="container-x mt-24">
+          <p className="eyebrow">Also in {category.short.toLowerCase()}</p>
+          <h2 className="mb-8 mt-2 text-3xl tracking-tight sm:text-4xl">You might also like</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((p) => (
+              <TicketCard key={p.id} tour={p} />
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
   );
 }
 

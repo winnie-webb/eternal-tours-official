@@ -14,6 +14,16 @@ export async function POST(request) {
     // Verify Firebase ID token with Firebase Admin
     const decodedToken = await adminAuth.verifyIdToken(idToken);
 
+    // Any Firebase Auth account would otherwise get an admin session. Once
+    // ADMIN_EMAILS (comma-separated) is set in Vercel, only those can sign in.
+    const allowed = (process.env.ADMIN_EMAILS || "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+    if (allowed.length && !allowed.includes(decodedToken.email?.toLowerCase())) {
+      return NextResponse.json({ error: "Not an admin account" }, { status: 403 });
+    }
+
     // Create secure JWT token (4 months expiration)
     const token = await createAuthToken({
       uid: decodedToken.uid,

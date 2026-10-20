@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// DRAFT — not deployed. The live rules currently allow anyone to read and
+// write everything until 2050, which exposes every booking (names, emails,
+// phone numbers) to anyone holding the public web config.
+//
+// Before deploying: put the real admin login email(s) in isAdmin(), then
+//   firebase deploy --only firestore:rules --project jett-1991e
+//
+// Products, images and the gallery are read and written by the server
+// (Admin SDK), which bypasses these rules, so the browser needs none of them.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email in [
+          "REPLACE_WITH_ADMIN_EMAIL@example.com"
+        ];
+    }
+
+    // Guests create bookings from the booking forms; only admins can read
+    // or update them (the Bookings screen).
+    match /bookings/{bookingId} {
+      allow create: if request.resource.data.status == "pending"
+        && request.resource.data.keys().hasAll(["name", "email", "tourName", "orderNumber"]);
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // Admin devices registered for booking push notifications.
+    match /users/{uid} {
+      allow read, write: if isAdmin() && request.auth.uid == uid;
+    }
+
+    // Everything else is server-only.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

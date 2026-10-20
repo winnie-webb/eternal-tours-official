@@ -1,35 +1,32 @@
-import React from 'react';
+import React from "react";
+
+const POINTS = [
+  ["Private vehicle", "Groups of 1–4 pay a minimum of four times the per-person rate."],
+  ["One trip per booking", "Each tour or transfer has its own date and time, so book them separately."],
+  ["Hotel pickups", "If you're at a hotel or resort, we meet you in the main lobby."],
+  ["Under 5s", "Children under five ride free with an adult."],
+  ["Transport only", "Prices cover transportation — excursion and entrance fees are extra."],
+];
 
 const BookingInfo = () => {
   return (
-    <div className="bg-gray-100 p-4 rounded-md mb-6 text-sm text-gray-800">
-      <p className="font-semibold text-gray-900">
-        Important Booking Information:
-      </p>
-      <ul className="list-disc ml-5 mt-3 space-y-2">
-        <li>
-          <strong>Chartered/Private Taxi:</strong> Minimum booking cost for
-          1-4 persons is four times the per-person rate.
-        </li>
-        <li>
-          <strong>One Tour/Transfer Per Booking:</strong> Please book one tour
-          or transfer at a time as each has a unique start time and date.
-        </li>
-        <li>
-          <strong>Hotel Pickup/Drop-off:</strong> For guests staying at a
-          hotel or resort, the pickup and drop-off point is the main lobby.
-        </li>
-        <li>
-          <strong>Children Under 5:</strong> Travel free with an accompanying
-          adult.
-        </li>
-        <li>
-          <strong>Transportation Only:</strong> This booking includes
-          transportation only and does not cover the cost of the excursion
-          or entrance fees.
-        </li>
+    <details className="group rounded-2xl border border-sand-300 bg-sand-50 open:bg-white">
+      <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-sm font-semibold text-ink">
+        <span className="flex items-center gap-3">
+          <span className="code-chip">Info</span>
+          Good to know before you book
+        </span>
+        <span className="text-ink-muted transition group-open:rotate-45">+</span>
+      </summary>
+      <ul className="grid gap-3 px-5 pb-5 text-sm sm:grid-cols-2">
+        {POINTS.map(([title, body]) => (
+          <li key={title} className="rounded-xl bg-sand-100 p-3">
+            <p className="font-semibold text-ink">{title}</p>
+            <p className="mt-1 leading-relaxed text-ink-muted">{body}</p>
+          </li>
+        ))}
       </ul>
-    </div>
+    </details>
   );
 };
 

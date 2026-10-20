@@ -1,5 +1,7 @@
 import admin from "../../../../firebaseAdmin";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
+import { PRODUCTS_TAG } from "@/lib/products.server";
 
 const db = admin.firestore();
 
@@ -33,7 +35,10 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     const { id } = params;
-    const body = await request.json();
+    // The admin sends back the whole product as it read it; the id is the
+    // document key and the timestamps arrive as plain JSON maps, so neither
+    // may be written back.
+    const { id: _id, createdAt, updatedAt, ...body } = await request.json();
 
     // Check if product exists
     const productDoc = await db.collection("products").doc(id).get();
@@ -48,6 +53,7 @@ export async function PUT(request, { params }) {
     };
 
     await db.collection("products").doc(id).update(updateData);
+    revalidateTag(PRODUCTS_TAG);
 
     return NextResponse.json(
       {
@@ -78,6 +84,11 @@ export async function DELETE(request, { params }) {
 
     // Delete the product
     await db.collection("products").doc(id).delete();
+    revalidateTag(PRODUCTS_TAG);
+
+    // Drop the uploaded image too, if it has one
+    const imageId = productDoc.data().imageUrl?.split("/api/images/")[1];
+    if (imageId) await db.collection("images").doc(imageId).delete();
 
     return NextResponse.json(
       { message: "Product deleted successfully" },

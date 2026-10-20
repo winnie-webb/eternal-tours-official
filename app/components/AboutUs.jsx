@@ -1,38 +1,63 @@
 import Image from "next/image";
-import React from "react";
+import Link from "next/link";
+import { FiArrowRight } from "react-icons/fi";
 
-function AboutUs() {
+function AboutUs({ full = false }) {
   return (
-    <section className="p-4 my-8 md:p-10 xl:w-[85%] 2xl:w-[70%] mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-        <div className="md:flex-[55%]">
-          <h2 className="font-bold text-3xl md:text-4xl  md:mb-8">
-          Get to know us
-          </h2>
-          <p className="font-medium text-lg md:leading-8">
-          At Jamaica Eternal Tours, we specialize in uncovering the hidden gems of Jamaica, offering tailored experiences that showcase the island’s beauty, culture, and heritage. From airport transfers to beach escapes and cultural explorations, we provide personalized, expert-guided tours that suit every traveler. Let us take you on an unforgettable journey through Jamaica’s stunning landscapes and iconic attractions, ensuring your comfort and convenience every step of the way.
-</p>          </div>
-        <div className="relative w-90 h-72 md:flex-[45%] md:mt-14 md:h-[22rem] ">
-          <Image
-            alt="Image of Founder with clients from Jamaica Eternal Tours"
-            src="/local/hero-1.jpg"
-            fill={true}
-            className="object-cover"
-          ></Image>
+    <section className="container-x mt-24">
+      <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="relative">
+          <div className="relative aspect-[4/5] max-h-[560px] w-full overflow-hidden rounded-[2rem] bg-sand-200">
+            <Image
+              alt="The Jamaica Eternal Tours founder with a group of guests"
+              src="/local/hero-1.jpg"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="absolute -bottom-6 right-6 rounded-2xl bg-ink px-5 py-4 text-sand-50 shadow-lift sm:right-10">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-sun-300">Based in</p>
+            <p className="font-display text-2xl">Montego Bay</p>
+          </div>
         </div>
-      </div>
-      <div className="flex mt-20 md:mt-20  flex-col md:flex-row justify-between gap-4">
-        <div className="md:flex-[50%]">
-          <h3 className="font-bold text-3xl md:mb-8 mb-4">Our Mission</h3>
-          <p className="font-medium text-base md:leading-7">
-          To empower travelers to explore Jamaica’s finest tours, creating meaningful connections and unforgettable experiences while promoting responsible and sustainable tourism practices.          </p>
-        </div>
-        <div className="md:flex-[50%]">
-          <h3 className="font-bold text-3xl md:mb-8 mb-4">Our Vision</h3>
-          <p className="font-medium text-base md:leading-7">
-          Our vision is to inspire transformative adventures in Jamaica, fostering appreciation for diverse cultures and contributing to a sustainable, interconnected planet through travel joy.
 
-</p>
+        <div>
+          <p className="eyebrow">Get to know us</p>
+          <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">
+            Locals showing you the Jamaica we love.
+          </h2>
+          <p className="mt-6 text-lg leading-relaxed text-ink-muted">
+            At Jamaica Eternal Tours, we specialize in uncovering the hidden gems of Jamaica,
+            offering tailored experiences that showcase the island&apos;s beauty, culture, and
+            heritage. From airport transfers to beach escapes and cultural explorations, we
+            provide personalized, expert-guided tours that suit every traveler.
+          </p>
+
+          {full ? (
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              <div className="card p-6">
+                <p className="code-chip">Mission</p>
+                <p className="mt-4 leading-relaxed text-ink-soft">
+                  To empower travelers to explore Jamaica&apos;s finest tours, creating meaningful
+                  connections and unforgettable experiences while promoting responsible and
+                  sustainable tourism practices.
+                </p>
+              </div>
+              <div className="card p-6">
+                <p className="code-chip">Vision</p>
+                <p className="mt-4 leading-relaxed text-ink-soft">
+                  To inspire transformative adventures in Jamaica, fostering appreciation for
+                  diverse cultures and contributing to a sustainable, interconnected planet
+                  through travel joy.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <Link href="/about-us" className="btn-ghost mt-8">
+              Our story <FiArrowRight />
+            </Link>
+          )}
         </div>
       </div>
     </section>

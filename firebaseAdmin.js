@@ -14,7 +14,14 @@ try {
   }
 
   // Remove any leading/trailing whitespace and ensure it's valid JSON
-  const cleanedKey = serviceAccountKey.trim();
+  // `vercel env pull` writes the key's \n escapes as real newlines, which
+  // JSON.parse rejects inside a string; re-escape them within the PEM block.
+  const cleanedKey = serviceAccountKey
+    .trim()
+    .replace(
+      /-----BEGIN PRIVATE KEY-----[\s\S]*?-----END PRIVATE KEY-----\n?/,
+      (pem) => pem.replace(/\n/g, "\\n")
+    );
   serviceAccount = JSON.parse(cleanedKey);
 
   // Fix the private key formatting

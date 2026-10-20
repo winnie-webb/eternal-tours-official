@@ -1,35 +1,30 @@
 "use client";
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import {
-  addDoc,
-  collection,
-  onSnapshot,
-  serverTimestamp,
-} from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import emailjs from "@emailjs/browser";
 import Pickup from "./Pickup";
 import NumberofPersons from "./NumberofPersons";
-import emailjs from "@emailjs/browser";
 import BookingSuccessMsg from "./BookingSuccessMsg";
-import { useRouter } from "next/navigation";
+import BookingInfo from "./BookingInfo";
+import FareSummary from "./FareSummary";
+import { ContactFields, PaymentChoice, Step, formatDate, formatTime, generateOrderNumber } from "./FormParts";
 import { db } from "@/firebase";
 import sendNotificationToAdmin from "@/app/utils/sendNotificationToAdmin";
-import BookingInfo from "./BookingInfo";
 
 export const TourBookingForm = ({ tour }) => {
   const form = useRef();
   const [totalPrice, setTotalPrice] = useState(0);
-  const [adults, setAdults] = useState(0);
+  const [adults, setAdults] = useState(1);
   const [kids, setKids] = useState(0);
   const [isMsgSent, setIsMsgSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPayingOnline, setIsPayingOnline] = useState(false);
   const [pricePerPerson, setPricePerPerson] = useState(0);
   const [orderNumber, setOrderNumber] = useState("");
   const [userFormData, setUserFormData] = useState(null);
-  // Function to generate order number
-  const generateOrderNumber = () => {
-    return `ET-${Math.floor(100000 + Math.random() * 900000)}`; // Generate a random 6-digit order number prefixed with "ET"
-  };
+  const [picked, setPicked] = useState({ area: "", date: "", time: "" });
 
+  // Private vehicle: 1–4 adults pay for four seats.
   const calculateTotalPrice = useCallback(() => {
     const total = adults * pricePerPerson;
     if (adults <= 4 && adults !== 0) {
@@ -43,15 +38,10 @@ export const TourBookingForm = ({ tour }) => {
     calculateTotalPrice();
   }, [adults, calculateTotalPrice, pricePerPerson]);
 
-  const handleAdultsChange = (value) => {
-    setAdults(value);
-  };
-
-  const handleKidsChange = (value) => {
-    setKids(value);
-  };
-
-  const sendEmail = async (e) => {
+  const sendEmail = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    const orderNum = generateOrderNumber();
     const formData = {
       email: form.current.email.value,
       phone_number: form.current.phone_number.value,
@@ -63,152 +53,87 @@ export const TourBookingForm = ({ tour }) => {
       pickup_location: form.current["pickup-location"].value,
       adults: adults,
       kids: kids,
-      pay_online: isPayingOnline ? "Yes" : "No", // Pay online field
+      pay_online: isPayingOnline ? "Yes" : "No",
       price_per_person: pricePerPerson,
       total_price: totalPrice,
       reply_to: form.current.email.value,
     };
     setUserFormData(formData);
     try {
-      // Send email using EmailJS
       await emailjs.send(
         "service_b3u5zxa",
         "template_rrfkk4m",
-        formData,
+        { ...formData, order_number: orderNum },
         "nxC4W-fiaC4DvJpPJ"
       );
 
-      // Create booking in Firebase
-      const orderNum = generateOrderNumber();
       setOrderNumber(orderNum);
-
-      // Save the booking details to Firebase
       await addDoc(collection(db, "bookings"), {
         ...formData,
         orderNumber: orderNum,
-        timestamp: serverTimestamp(), // Add timestamp for when the booking was made
-        status: "pending", // Initial booking status
+        timestamp: serverTimestamp(),
+        status: "pending",
       });
       sendNotificationToAdmin();
       setIsMsgSent(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error("Error creating booking:", error);
-      alert(
-        "Error sending booking or email. Please try again or contact support."
-      );
+      alert("Error sending booking or email. Please try again or contact support.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return !isMsgSent ? (
+  if (isMsgSent) {
+    return <BookingSuccessMsg formData={userFormData} orderNumber={orderNumber} tour={tour} />;
+  }
+
+  return (
     <form
       ref={form}
       id="booking-form"
-      className="max-w-3xl mx-auto bg-white p-6 shadow-lg rounded-lg mt-8"
       onSubmit={(e) => {
         e.preventDefault();
         sendEmail();
       }}
+      className="grid items-start gap-6 lg:grid-cols-[1fr_380px]"
     >
-      <BookingInfo></BookingInfo>
-
-      <h2 className="text-3xl font-bold text-center mb-6 text-emerald-600">
-        Booking Form
-      </h2>
-      <div className="mb-2">
-        <label
-          htmlFor="name"
-          className="block text-gray-700 font-semibold mb-2"
-        >
-          Your Name:
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
-        />
-      </div>
-      <Pickup tour={tour} setPricePerPerson={setPricePerPerson} />
-      <NumberofPersons
-        onAdultsChange={handleAdultsChange}
-        onKidsChange={handleKidsChange}
-      />
-
-      <div className="mb-4">
-        <label
-          htmlFor="email"
-          className="block text-gray-700 font-semibold mb-2"
-        >
-          Email Address:
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
-        />
+      <div className="space-y-6">
+        <Step n={1} title="Your trip">
+          <Pickup
+            tour={tour}
+            setPricePerPerson={setPricePerPerson}
+            onChange={(key, value) => setPicked((p) => ({ ...p, [key]: value }))}
+          />
+        </Step>
+        <Step n={2} title="Travellers">
+          <NumberofPersons adults={adults} kids={kids} onAdultsChange={setAdults} onKidsChange={setKids} />
+        </Step>
+        <Step n={3} title="Your details">
+          <div className="space-y-6">
+            <ContactFields />
+            <PaymentChoice isPayingOnline={isPayingOnline} setIsPayingOnline={setIsPayingOnline} />
+          </div>
+        </Step>
+        <BookingInfo />
       </div>
 
-      <div className="mb-2">
-        <label
-          htmlFor="phone_number"
-          className="block text-gray-700 font-semibold mb-2"
-        >
-          Phone Number:
-        </label>
-        <input
-          type="text"
-          id="phone_number"
-          name="phone_number"
-          required
-          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-300 focus:outline-none"
-        />
-      </div>
-
-      <div className="flex items-center mb-4">
-        <input
-          type="checkbox"
-          id="pay-online"
-          name="pay-online"
-          className="mr-2"
-          onChange={(e) => {
-            setIsPayingOnline(e.target.checked);
-          }}
-        />
-        <label htmlFor="pay-online" className="text-gray-700 font-semibold">
-          Do you want to pay online?
-        </label>
-      </div>
-      <p className="text-gray-600 text-sm mb-4">
-        (If you want to pay when you arrive, please leave the box unchecked)
-      </p>
-
-      <div className="text-lg mb-4">
-        <p>
-          Total Price: $
-          <span id="total-price" className="font-semibold">
-            {totalPrice}
-          </span>
-        </p>
-      </div>
-
-      <button
-        type="submit"
-        id="book-button"
-        className="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700 transition duration-200"
-      >
-        Book Now
-      </button>
-    </form>
-  ) : (
-    <div>
-      <BookingSuccessMsg
-        formData={userFormData}
-        orderNumber={orderNumber}
+      <FareSummary
         tour={tour}
+        adults={adults}
+        pricePerPerson={pricePerPerson}
+        totalPrice={totalPrice}
+        submitting={isSubmitting}
+        submitLabel="Book this tour"
+        rows={[
+          { label: "Pick-up area", value: picked.area, wide: true },
+          { label: "Date", value: formatDate(picked.date) },
+          { label: "Time", value: formatTime(picked.time) },
+          { label: "Adults", value: String(adults) },
+          { label: "Kids", value: String(kids) },
+        ]}
       />
-    </div>
+    </form>
   );
 };
