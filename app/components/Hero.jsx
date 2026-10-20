@@ -1,9 +1,7 @@
 "use client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import Link from "next/link";
 import { FiArrowRight, FiSearch } from "react-icons/fi";
-import { CATEGORIES } from "@/lib/catalog";
 
 const STACK = [
   { src: "/local/hero-4.jpg", alt: "Guests bamboo rafting on the river", tilt: "-rotate-6", pos: "left-0 top-4" },
@@ -12,9 +10,6 @@ const STACK = [
 ];
 
 function Hero() {
-  const router = useRouter();
-  const [destination, setDestination] = useState("at");
-
   return (
     <section className="relative overflow-hidden">
 
@@ -30,50 +25,23 @@ function Hero() {
           </h1>
           <p className="mt-6 max-w-lg text-pretty text-lg leading-relaxed text-ink-muted">
             From the moment you land at Sangster to your last sunset in Negril —
-            a private driver, a fixed price, and a local who knows the way.
+            a private driver, upfront prices, and a local who knows the way.
           </p>
 
-          {/* Boarding-pass quick finder */}
-          <div className="mt-9 max-w-xl overflow-hidden rounded-3xl bg-white shadow-lift ring-1 ring-sand-200">
-            <div className="flex items-center justify-between bg-ink px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.25em] text-sun-300">
-              <span>Plan your trip</span>
-            </div>
-            <div className="flex flex-col sm:flex-row">
-              <div className="flex-1 p-5">
-                <label htmlFor="hero-destination" className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">
-                  Where to?
-                </label>
-                <select
-                  id="hero-destination"
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  className="mt-1 w-full cursor-pointer bg-transparent font-display text-2xl font-medium text-ink outline-none"
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="perforation sm:hidden" style={{ "--notch": "#fff" }} />
-              <div className="perforation-y hidden sm:block" style={{ "--notch": "#fff" }} />
-              <div className="flex items-center gap-2 p-4 sm:p-5">
-                <button
-                  onClick={() => router.push(`/category/${destination}`)}
-                  className="btn-sun flex-1 !px-6 !py-3.5 sm:flex-none"
-                >
-                  Find rides <FiArrowRight />
-                </button>
-                <button
-                  onClick={() => window.dispatchEvent(new Event("jett:search"))}
-                  className="grid h-12 w-12 place-items-center rounded-full border border-ink/10 text-lg hover:bg-sand-100"
-                  aria-label="Search all tours"
-                >
-                  <FiSearch />
-                </button>
-              </div>
-            </div>
+          {/* Say exactly where each button goes */}
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link href="/category/mpt" className="btn-primary !px-7 !py-4 text-base">
+              Browse tours <FiArrowRight />
+            </Link>
+            <Link href="/category/at" className="btn-sun !px-7 !py-4 text-base">
+              Book an airport transfer
+            </Link>
+            <button
+              onClick={() => window.dispatchEvent(new Event("jett:search"))}
+              className="inline-flex items-center justify-center gap-2 px-3 py-3 text-sm font-semibold text-ink-soft hover:text-jett-700"
+            >
+              <FiSearch /> Search tours
+            </button>
           </div>
 
           <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-ink-soft">
