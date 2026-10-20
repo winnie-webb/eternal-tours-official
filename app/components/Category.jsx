@@ -13,7 +13,7 @@ export function CategoryRow({ code, products, limit = 8, eyebrow }) {
     <section className="container-x mt-24">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="eyebrow">{eyebrow || `${code} · ${sorted.length} options`}</p>
+          <p className="eyebrow">{eyebrow || `${sorted.length} options`}</p>
           <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{category.title}</h2>
           <p className="mt-3 max-w-xl text-ink-muted">{category.blurb}</p>
         </div>
@@ -34,7 +34,7 @@ export function CategoryRow({ code, products, limit = 8, eyebrow }) {
           href={`/category/${code}`}
           className="flex w-[60vw] shrink-0 snap-start flex-col justify-between rounded-3xl bg-ink p-6 text-sand-100 transition hover:bg-jett-700 sm:w-[260px]"
         >
-          <span className="code-chip w-fit !bg-sun-400 !text-ink">{code}</span>
+          <span />
           <span>
             <span className="block font-display text-3xl leading-tight">
               All {category.short.toLowerCase()}

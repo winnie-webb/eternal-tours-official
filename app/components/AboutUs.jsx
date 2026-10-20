@@ -37,16 +37,16 @@ function AboutUs({ full = false }) {
           {full ? (
             <div className="mt-10 grid gap-6 sm:grid-cols-2">
               <div className="card p-6">
-                <p className="code-chip">Mission</p>
-                <p className="mt-4 leading-relaxed text-ink-soft">
+                <h3 className="font-sans text-lg font-bold">Our mission</h3>
+                <p className="mt-2 leading-relaxed text-ink-soft">
                   To empower travelers to explore Jamaica&apos;s finest tours, creating meaningful
                   connections and unforgettable experiences while promoting responsible and
                   sustainable tourism practices.
                 </p>
               </div>
               <div className="card p-6">
-                <p className="code-chip">Vision</p>
-                <p className="mt-4 leading-relaxed text-ink-soft">
+                <h3 className="font-sans text-lg font-bold">Our vision</h3>
+                <p className="mt-2 leading-relaxed text-ink-soft">
                   To inspire transformative adventures in Jamaica, fostering appreciation for
                   diverse cultures and contributing to a sustainable, interconnected planet
                   through travel joy.

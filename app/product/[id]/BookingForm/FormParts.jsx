@@ -5,7 +5,7 @@ export function Step({ n, title, children }) {
     <section className="card p-5 sm:p-7">
       <div className="mb-5 flex items-center gap-3">
         <span className="grid h-8 w-8 place-items-center rounded-full bg-ink font-mono text-xs font-semibold text-sun-300">
-          {String(n).padStart(2, "0")}
+          {n}
         </span>
         <h2 className="font-sans text-lg font-bold">{title}</h2>
       </div>

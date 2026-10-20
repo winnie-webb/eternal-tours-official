@@ -36,8 +36,7 @@ function Hero() {
           {/* Boarding-pass quick finder */}
           <div className="mt-9 max-w-xl overflow-hidden rounded-3xl bg-white shadow-lift ring-1 ring-sand-200">
             <div className="flex items-center justify-between bg-ink px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.25em] text-sun-300">
-              <span>Boarding pass</span>
-              <span>JETT · JA</span>
+              <span>Plan your trip</span>
             </div>
             <div className="flex flex-col sm:flex-row">
               <div className="flex-1 p-5">
@@ -96,8 +95,7 @@ function Hero() {
                 <Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 640px) 60vw, 270px" className="object-cover" priority={i === 2} />
               </div>
               <figcaption className="absolute bottom-3 left-4 right-4 flex justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">
-                <span>JETT</span>
-                <span>{["River", "Falls", "Arrivals"][i]}</span>
+                <span>{["River rafting", "YS Falls", "Airport pickup"][i]}</span>
               </figcaption>
             </figure>
           ))}

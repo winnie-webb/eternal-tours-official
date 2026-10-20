@@ -1,17 +1,17 @@
 // Booking explained as a route: three stops on one line.
 const STOPS = [
   {
-    code: "01",
+    code: "1",
     title: "Pick your trip",
     body: "Choose a tour or transfer and the area you're staying in — the fare updates as you go.",
   },
   {
-    code: "02",
+    code: "2",
     title: "We confirm",
     body: "You get an order number straight away, and we get in touch to confirm your pickup.",
   },
   {
-    code: "03",
+    code: "3",
     title: "Ride & pay",
     body: "Your driver meets you at the lobby, port or arrivals hall. Pay on arrival or by Zelle.",
   },

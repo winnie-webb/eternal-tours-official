@@ -12,10 +12,7 @@ const BookingInfo = () => {
   return (
     <details className="group rounded-2xl border border-sand-300 bg-sand-50 open:bg-white">
       <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-sm font-semibold text-ink">
-        <span className="flex items-center gap-3">
-          <span className="code-chip">Info</span>
-          Good to know before you book
-        </span>
+        <span>Good to know before you book</span>
         <span className="text-ink-muted transition group-open:rotate-45">+</span>
       </summary>
       <ul className="grid gap-3 px-5 pb-5 text-sm sm:grid-cols-2">

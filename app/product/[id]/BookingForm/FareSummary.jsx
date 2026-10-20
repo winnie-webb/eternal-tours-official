@@ -18,11 +18,8 @@ export default function FareSummary({
   return (
     <aside className="lg:sticky lg:top-24">
       <div className="overflow-hidden rounded-3xl bg-ink text-sand-100 shadow-lift">
-        <div className="flex items-center justify-between px-6 pt-5 font-mono text-[10px] uppercase tracking-[0.25em] text-sun-300">
-          <span>Boarding pass</span>
-          <span>
-            {tour.category} · {tour.id?.split("-")[1]?.padStart(2, "0")}
-          </span>
+        <div className="px-6 pt-5 font-mono text-[10px] uppercase tracking-[0.25em] text-sun-300">
+          Your booking
         </div>
         <div className="px-6 pb-6 pt-3">
           <p className="font-display text-2xl leading-snug">{tour.title}</p>

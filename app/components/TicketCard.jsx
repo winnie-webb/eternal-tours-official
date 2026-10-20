@@ -7,7 +7,6 @@ import { formatMoney, getCategory, productImage } from "@/lib/catalog";
 // route code and fare.
 export default function TicketCard({ tour, className = "", priority = false, badge }) {
   const category = getCategory(tour.category);
-  const number = tour.id?.split("-")[1]?.padStart(2, "0");
 
   return (
     <Link
@@ -25,10 +24,7 @@ export default function TicketCard({ tour, className = "", priority = false, bad
           className="object-cover transition duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
-          <span className="code-chip shadow-sm">
-            {tour.category}
-            {number && <span className="ml-1 text-sand-300/70">·{number}</span>}
-          </span>
+          <span />
           {badge && (
             <span className="rounded-full bg-sun-400 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-ink">
               {badge}

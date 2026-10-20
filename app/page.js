@@ -29,30 +29,19 @@ export default async function Home() {
 
       {/* Every category, as a departures board */}
       <section className="container-x mt-24">
-        <p className="eyebrow">Departures</p>
-        <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">Where would you like to go?</h2>
-        <div className="mt-8 overflow-hidden rounded-3xl bg-ink text-sand-100 shadow-lift">
-          <div className="hidden grid-cols-[90px_1fr_120px_40px] gap-4 border-b border-white/10 px-6 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-sand-300/60 sm:grid">
-            <span>Code</span>
-            <span>Destination</span>
-            <span className="text-right">Trips</span>
-            <span />
-          </div>
+        <h2 className="text-4xl tracking-tight sm:text-5xl">Where would you like to go?</h2>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.filter((c) => counts[c.code] > 0).map((c) => (
             <Link
               key={c.code}
               href={`/category/${c.code}`}
-              className="group grid grid-cols-[70px_1fr_auto] items-center gap-4 border-b border-white/5 px-6 py-4 transition last:border-0 hover:bg-white/5 sm:grid-cols-[90px_1fr_120px_40px]"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-sand-200 bg-white p-5 transition hover:border-jett-600 hover:shadow-ticket"
             >
-              <span className="font-mono text-lg font-semibold uppercase text-sun-300">{c.code}</span>
               <span>
-                <span className="block font-semibold">{c.title}</span>
-                <span className="hidden text-sm text-sand-300/70 sm:block">{c.blurb}</span>
+                <span className="block font-semibold text-ink group-hover:text-jett-700">{c.title}</span>
+                <span className="mt-1 block text-sm text-ink-muted">{counts[c.code]} trips</span>
               </span>
-              <span className="text-right font-mono text-sm text-sand-300/80">
-                {String(counts[c.code]).padStart(2, "0")}
-              </span>
-              <span className="hidden text-right text-sun-300 transition group-hover:translate-x-1 sm:block">→</span>
+              <span className="text-xl text-jett-600 transition group-hover:translate-x-1">→</span>
             </Link>
           ))}
         </div>

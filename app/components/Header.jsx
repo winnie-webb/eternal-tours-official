@@ -114,9 +114,6 @@ function Header() {
                         href={`/category/${c.code}`}
                         className="group flex gap-3 rounded-2xl p-3 transition hover:bg-sand-100"
                       >
-                        <span className="code-chip mt-0.5 h-fit min-w-[44px] justify-center">
-                          {c.code}
-                        </span>
                         <span>
                           <span className="block text-sm font-semibold text-ink group-hover:text-jett-600">
                             {c.title}
@@ -182,7 +179,6 @@ function Header() {
                     href={`/category/${c.code}`}
                     className="flex items-center gap-3 rounded-2xl px-3 py-3 hover:bg-white"
                   >
-                    <span className="code-chip min-w-[44px] justify-center">{c.code}</span>
                     <span className="text-[15px] font-semibold">{c.title}</span>
                   </Link>
                 ))}

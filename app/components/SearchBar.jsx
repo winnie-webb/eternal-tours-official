@@ -117,9 +117,8 @@ function SearchBar({ open, onClose }) {
                   <p className="line-clamp-1 text-[15px] font-semibold text-ink">
                     {product.title}
                   </p>
-                  <p className="mt-0.5 flex items-center gap-2 text-xs text-ink-muted">
-                    <span className="code-chip">{product.category}</span>
-                    {getCategory(product.category).short}
+                  <p className="mt-0.5 text-xs text-ink-muted">
+                    {getCategory(product.category).title}
                   </p>
                 </div>
                 <p className="font-mono text-sm font-semibold text-ink">

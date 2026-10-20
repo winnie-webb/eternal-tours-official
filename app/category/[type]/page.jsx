@@ -35,10 +35,7 @@ async function page({ params }) {
         </Link>
         <div className="mt-8 grid items-end gap-8 lg:grid-cols-[1fr_auto]">
           <div>
-            <p className="font-mono text-6xl font-semibold uppercase leading-none tracking-tight text-jett-600 sm:text-8xl">
-              {type}
-            </p>
-            <h1 className="mt-4 text-balance text-4xl tracking-tight sm:text-6xl">{category.title}</h1>
+            <h1 className="text-balance text-4xl tracking-tight sm:text-6xl">{category.title}</h1>
             <p className="mt-4 max-w-xl text-lg text-ink-muted">{category.blurb}</p>
           </div>
           {products.length > 0 && (
@@ -69,9 +66,6 @@ async function page({ params }) {
                   : "border-ink/10 bg-white hover:border-ink/40"
               }`}
             >
-              <span className={`font-mono text-[10px] uppercase ${c.code === type ? "text-sun-300" : "text-ink-muted"}`}>
-                {c.code}
-              </span>
               {c.short}
             </Link>
           ))}

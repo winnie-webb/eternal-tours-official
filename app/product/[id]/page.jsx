@@ -58,10 +58,7 @@ async function page({ params }) {
             />
           </div>
           <div>
-            <div className="flex items-center gap-3">
-              <span className="code-chip">{tour.category}</span>
-              <span className="eyebrow !text-ink-muted">{category.title}</span>
-            </div>
+            <p className="eyebrow">{category.title}</p>
             <h1 className="mt-4 text-balance text-4xl leading-[1.05] tracking-tight sm:text-5xl">
               {tour.title}
             </h1>

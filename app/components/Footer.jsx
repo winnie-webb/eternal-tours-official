@@ -42,10 +42,7 @@ function Footer() {
               <ul className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
                 {CATEGORIES.map((c) => (
                   <li key={c.code}>
-                    <Link href={`/category/${c.code}`} className="group flex items-center gap-2 hover:text-sun-300">
-                      <span className="font-mono text-[10px] uppercase text-sand-300/60 group-hover:text-sun-300">
-                        {c.code}
-                      </span>
+                    <Link href={`/category/${c.code}`} className="hover:text-sun-300">
                       {c.title}
                     </Link>
                   </li>
@@ -70,7 +67,7 @@ function Footer() {
 
         <div className="mt-16 flex flex-col justify-between gap-4 border-t border-white/10 pt-6 text-xs text-sand-300/70 sm:flex-row">
           <p>© {new Date().getFullYear()} Jamaica Eternal Tours &amp; Transportation</p>
-          <p className="font-mono uppercase tracking-[0.2em]">JETT · Montego Bay, Jamaica</p>
+          <p>Montego Bay, Jamaica</p>
         </div>
       </div>
     </footer>
