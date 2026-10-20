@@ -92,6 +92,8 @@ const AdminPanel = () => {
         });
         // Re-check against the latest list in case another admin added one
         clean.id = nextProductId(productList, clean.category);
+        // No photo yet: show a neutral placeholder rather than a broken image
+        if (!clean.imageUrl) clean.imageUrl = "/tour-placeholder.svg";
         await axios.post("/api/products", clean);
         toast.success(`Created ${clean.id}`);
       } else {

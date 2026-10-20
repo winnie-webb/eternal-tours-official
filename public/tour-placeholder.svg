@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ECFDF5"/>
+      <stop offset="1" stop-color="#A7F3D0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#sea)"/>
+  <circle cx="400" cy="360" r="150" fill="#FBBA3E"/>
+  <path d="M0 520 Q100 490 200 520 T400 520 T600 520 T800 520 V800 H0Z" fill="#059669"/>
+  <path d="M0 580 Q100 550 200 580 T400 580 T600 580 T800 580 V800 H0Z" fill="#047857"/>
+  <text x="400" y="700" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#ECFDF5">Jamaica Eternal Tours</text>
+</svg>

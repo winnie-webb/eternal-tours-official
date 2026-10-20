@@ -1,4 +1,8 @@
 export default function getPickupTitle(pickup) {
+  // Keys written out in words ("All Other Resorts in Negril Price") already
+  // say where they are; only the short camelCase keys need mapping.
+  if (/\s/.test(pickup)) return pickup.replace(/\s*price\s*$/i, "").trim();
+
   let pickupName = "";
   if (pickup.toLowerCase().includes("falmouth")) {
     pickupName = "Falmouth & Duncans (Trelawny)";
