@@ -75,16 +75,6 @@ async function page({ params }) {
                   <span className="ml-1 font-sans text-sm text-ink-muted">/ person</span>
                 </dd>
               </div>
-              <div className="rounded-2xl bg-white px-5 py-3 ring-1 ring-sand-200">
-                <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">Vehicle</dt>
-                <dd className="mt-1 font-semibold">Private, just your group</dd>
-              </div>
-              <div className="rounded-2xl bg-white px-5 py-3 ring-1 ring-sand-200">
-                <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">Pick-up</dt>
-                <dd className="mt-1 font-semibold">
-                  {isTransfer ? "Arrivals hall or your lobby" : "Your hotel lobby or port"}
-                </dd>
-              </div>
             </dl>
           </div>
         </div>

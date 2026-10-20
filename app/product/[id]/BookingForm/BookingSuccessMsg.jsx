@@ -42,10 +42,10 @@ function BookingSuccessMsg({ orderNumber, formData }) {
     <div className="mx-auto max-w-3xl animate-rise">
       <div className="text-center">
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-palm-500 text-2xl text-white">✓</span>
-        <h1 className="mt-5 text-4xl tracking-tight sm:text-5xl">You&apos;re booked in.</h1>
+        <h1 className="mt-5 text-4xl tracking-tight sm:text-5xl">Booking Confirmed!</h1>
         <p className="mx-auto mt-3 max-w-md text-ink-muted">
-          We&apos;ve received your booking and will be in touch to confirm. Keep your order number
-          handy — you&apos;ll need it if you pay by Zelle.
+          Thank you! We&apos;ve successfully received your booking details. If you have any
+          questions, feel free to reach out to us on our socials.
         </p>
       </div>
 

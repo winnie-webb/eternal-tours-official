@@ -106,22 +106,15 @@ function Header() {
                 />
               </button>
               {isToursOpen && (
-                <div className="absolute left-1/2 top-full w-[560px] -translate-x-1/2 pt-3">
-                  <div className="grid animate-rise grid-cols-2 gap-1 rounded-3xl border border-sand-200 bg-white p-3 shadow-lift">
+                <div className="absolute left-0 top-full w-72 pt-3">
+                  <div className="flex animate-rise flex-col rounded-2xl border border-sand-200 bg-white p-2 shadow-lift">
                     {CATEGORIES.map((c) => (
                       <Link
                         key={c.code}
                         href={`/category/${c.code}`}
-                        className="group flex gap-3 rounded-2xl p-3 transition hover:bg-sand-100"
+                        className="rounded-xl px-3 py-2.5 text-sm font-semibold text-ink transition hover:bg-sand-100 hover:text-jett-700"
                       >
-                        <span>
-                          <span className="block text-sm font-semibold text-ink group-hover:text-jett-600">
-                            {c.title}
-                          </span>
-                          <span className="mt-0.5 block text-xs leading-snug text-ink-muted">
-                            {c.blurb}
-                          </span>
-                        </span>
+                        {c.title}
                       </Link>
                     ))}
                   </div>

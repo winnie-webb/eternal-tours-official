@@ -15,7 +15,6 @@ export function CategoryRow({ code, products, limit = 8, eyebrow }) {
         <div>
           <p className="eyebrow">{eyebrow || `${sorted.length} options`}</p>
           <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{category.title}</h2>
-          <p className="mt-3 max-w-xl text-ink-muted">{category.blurb}</p>
         </div>
         <Link href={`/category/${code}`} className="btn-ghost">
           See all {sorted.length} <FiArrowRight />
@@ -56,13 +55,8 @@ export function CategoryGrid({ products }) {
   if (sorted.length === 0) {
     return (
       <div className="card mx-auto max-w-lg p-10 text-center">
-        <p className="font-display text-2xl">Nothing scheduled here yet.</p>
-        <p className="mt-2 text-ink-muted">
-          New trips land often — or message us and we&apos;ll build one for you.
-        </p>
-        <Link href="/contact-us" className="btn-primary mt-6">
-          Ask for a custom tour
-        </Link>
+        <p className="font-display text-2xl">No Tours Available</p>
+        <p className="mt-2 text-ink-muted">Check back soon for exciting new adventures!</p>
       </div>
     );
   }

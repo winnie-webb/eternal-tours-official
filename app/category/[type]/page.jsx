@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
   const category = getCategory(params.type);
   return {
     title: `${category.title} · Jamaica Eternal Tours`,
-    description: category.blurb,
+    description: `${category.title} with Jamaica Eternal Tours and Transportation.`,
   };
 }
 
@@ -36,7 +36,6 @@ async function page({ params }) {
         <div className="mt-8 grid items-end gap-8 lg:grid-cols-[1fr_auto]">
           <div>
             <h1 className="text-balance text-4xl tracking-tight sm:text-6xl">{category.title}</h1>
-            <p className="mt-4 max-w-xl text-lg text-ink-muted">{category.blurb}</p>
           </div>
           {products.length > 0 && (
             <dl className="flex gap-8 rounded-3xl bg-white px-6 py-4 shadow-ticket ring-1 ring-sand-200">

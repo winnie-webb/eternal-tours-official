@@ -16,8 +16,7 @@ const ElfSightWidget = () => {
 
   return (
     <section className="container-x mt-24">
-      <p className="eyebrow">Reviews</p>
-      <h2 className="mb-8 mt-2 text-4xl tracking-tight sm:text-5xl">What our guests say.</h2>
+      <h2 className="mb-8 text-4xl tracking-tight sm:text-5xl">Reviews</h2>
       <div
         className="elfsight-app-c9122de4-5952-4800-a0f3-8f813025565f"
         data-elfsight-app-lazy

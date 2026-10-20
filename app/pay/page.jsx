@@ -11,21 +11,11 @@ const PaymentComponent = () => {
   return (
     <main className="container-x pb-8 pt-10">
       <div className="max-w-2xl">
-        <p className="eyebrow">Payments</p>
-        {queryAmount ? (
-          <h1 className="mt-3 text-4xl tracking-tight sm:text-6xl">
-            Your booking total is{" "}
-            <span className="italic text-jett-600">${formatMoney(queryAmount)}</span> USD
-          </h1>
-        ) : (
-          <h1 className="mt-3 text-4xl tracking-tight sm:text-6xl">
-            Pay the way that <span className="italic text-jett-600">suits you.</span>
-          </h1>
-        )}
-        <p className="mt-4 text-lg text-ink-muted">
-          Nothing is charged when you book. Settle up by Zelle before your trip, or pay your
-          driver on the day.
-        </p>
+        <h1 className="text-4xl tracking-tight sm:text-6xl">
+          {queryAmount
+            ? `The total price of your booking is $${formatMoney(queryAmount)} USD`
+            : "Make a Payment"}
+        </h1>
       </div>
       <div className="mt-10">
         <PaymentOptions />

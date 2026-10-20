@@ -234,7 +234,6 @@ export const TransferBookingForm = ({ tour }) => {
                   <div>
                     <label htmlFor="pickup-time" className="field-label">Pick-up time from your stay</label>
                     <input type="time" id="pickup-time" required className="field" {...bind("pickupTime")} />
-                    <p className="field-hint">Most guests leave 3 hours before an international flight.</p>
                   </div>
                 </>
               )}

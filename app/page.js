@@ -4,7 +4,6 @@ import Gallery from "./components/Gallery";
 import ElfSightWidget from "./components/Elfsight";
 import { CategoryRow } from "./components/Category";
 import AboutUs from "./components/AboutUs";
-import HowItWorks from "./components/HowItWorks";
 import { TripAdvisor } from "./components/TripAdvisor";
 import { CATEGORIES } from "@/lib/catalog";
 import { getProducts } from "@/lib/products.server";
@@ -22,10 +21,9 @@ export default async function Home() {
       <Hero />
       <TripAdvisor />
 
-      <CategoryRow code="mpt" products={inCategory("mpt")} eyebrow="Guest favourites" />
-      <CategoryRow code="at" products={inCategory("at")} eyebrow="Land & go" />
+      <CategoryRow code="mpt" products={inCategory("mpt")} />
+      <CategoryRow code="at" products={inCategory("at")} />
 
-      <HowItWorks />
 
       {/* Every category, as a departures board */}
       <section className="container-x mt-24">
@@ -47,7 +45,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <CategoryRow code="ctp" products={inCategory("ctp")} eyebrow="More in one day" />
+      <CategoryRow code="ctp" products={inCategory("ctp")} />
       <Gallery />
       <ElfSightWidget />
       <AboutUs />

@@ -16,22 +16,17 @@ function AboutUs({ full = false }) {
               className="object-cover"
             />
           </div>
-          <div className="absolute -bottom-6 right-6 rounded-2xl bg-ink px-5 py-4 text-sand-50 shadow-lift sm:right-10">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-sun-300">Based in</p>
-            <p className="font-display text-2xl">Montego Bay</p>
-          </div>
         </div>
 
         <div>
-          <p className="eyebrow">Get to know us</p>
-          <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">
-            Locals showing you the Jamaica we love.
-          </h2>
+          <h2 className="text-4xl tracking-tight sm:text-5xl">Get to know us</h2>
           <p className="mt-6 text-lg leading-relaxed text-ink-muted">
             At Jamaica Eternal Tours, we specialize in uncovering the hidden gems of Jamaica,
             offering tailored experiences that showcase the island&apos;s beauty, culture, and
             heritage. From airport transfers to beach escapes and cultural explorations, we
-            provide personalized, expert-guided tours that suit every traveler.
+            provide personalized, expert-guided tours that suit every traveler. Let us take you on
+            an unforgettable journey through Jamaica&apos;s stunning landscapes and iconic
+            attractions, ensuring your comfort and convenience every step of the way.
           </p>
 
           {full ? (

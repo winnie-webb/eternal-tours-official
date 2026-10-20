@@ -10,12 +10,7 @@ export const TripAdvisor = () => {
       <div className="flex flex-col items-center gap-6 rounded-3xl border border-sand-200 bg-white px-6 py-6 sm:flex-row sm:justify-between sm:px-10">
         <div className="flex items-center gap-5">
           <TripAdvisorCertificate />
-          <div>
-            <p className="eyebrow">Tripadvisor Travelers&apos; Choice</p>
-            <p className="mt-1 font-display text-2xl leading-tight">
-              Rated by the guests we&apos;ve driven.
-            </p>
-          </div>
+          <p className="font-display text-2xl leading-tight">Tripadvisor Travelers&apos; Choice</p>
         </div>
         <TripAdvisorWidget />
       </div>

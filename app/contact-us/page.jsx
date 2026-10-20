@@ -28,14 +28,7 @@ const ContactUs = () => {
     <main className="container-x pt-10">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
         <div>
-          <p className="eyebrow">Contact</p>
-          <h1 className="mt-3 text-5xl tracking-tight sm:text-6xl">
-            Planning a trip? <span className="italic text-jett-600">Ask us anything.</span>
-          </h1>
-          <p className="mt-5 max-w-md text-lg text-ink-muted">
-            Custom routes, big groups, a stop that isn&apos;t on the list — tell us what you have in
-            mind and we&apos;ll put a price on it.
-          </p>
+          <h1 className="text-5xl tracking-tight sm:text-6xl">Contact Us</h1>
           <ul className="mt-10 space-y-4">
             <li>
               <a href={`mailto:${CONTACT.email}`} className="group flex items-center gap-4">

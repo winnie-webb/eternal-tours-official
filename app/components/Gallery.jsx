@@ -25,14 +25,7 @@ function Gallery() {
   return (
     <section className="mt-24 overflow-hidden" aria-label="Photos from our tours">
       <div className="container-x mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="eyebrow">From the road</p>
-          <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">Our guests, out and about.</h2>
-        </div>
-        <p className="max-w-sm text-ink-muted">
-          Every photo here is a real group we&apos;ve driven — rafting, falls, Nine Mile and
-          everywhere between.
-        </p>
+        <h2 className="text-4xl tracking-tight sm:text-5xl">Gallery</h2>
       </div>
       <div className="group relative">
         <div className="flex w-max animate-drift gap-4 group-hover:[animation-play-state:paused]">

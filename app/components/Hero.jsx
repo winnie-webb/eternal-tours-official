@@ -15,17 +15,11 @@ function Hero() {
 
       <div className="container-x relative grid items-center gap-12 pb-16 pt-10 lg:grid-cols-[1.1fr_1fr] lg:pb-24 lg:pt-16">
         <div className="animate-rise">
-          <p className="eyebrow flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-sunset-500" />
-            Private tours &amp; airport transfers · Jamaica
-          </p>
-          <h1 className="mt-5 text-balance text-[3.25rem] font-medium leading-[0.95] tracking-tight sm:text-7xl xl:text-[5.5rem]">
-            Jamaica,{" "}
-            <em className="font-normal italic text-jett-600">door to door.</em>
+          <h1 className="text-balance text-5xl font-medium leading-[0.95] tracking-tight sm:text-7xl">
+            Jamaica Eternal Tours
           </h1>
           <p className="mt-6 max-w-lg text-pretty text-lg leading-relaxed text-ink-muted">
-            From the moment you land at Sangster to your last sunset in Negril —
-            a private driver, upfront prices, and a local who knows the way.
+            The island&apos;s premier bus tour agency for all your transportation needs
           </p>
 
           {/* Say exactly where each button goes */}
@@ -45,7 +39,7 @@ function Hero() {
           </div>
 
           <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-ink-soft">
-            <li className="flex items-center gap-2"><Tick /> Private — never shared</li>
+            <li className="flex items-center gap-2"><Tick /> Chartered / private taxi</li>
             <li className="flex items-center gap-2"><Tick /> Kids under 5 ride free</li>
             <li className="flex items-center gap-2"><Tick /> Pay on arrival, cash or card</li>
           </ul>
@@ -56,22 +50,14 @@ function Hero() {
           {STACK.map((photo, i) => (
             <figure
               key={photo.src}
-              className={`absolute ${photo.pos} ${photo.tilt} w-[52%] rounded-[28px] bg-white p-2.5 pb-10 shadow-lift ring-1 ring-sand-200 transition duration-500 hover:z-20 hover:rotate-0 hover:scale-[1.03]`}
+              className={`absolute ${photo.pos} ${photo.tilt} w-[52%] rounded-[28px] bg-white p-2.5 shadow-lift ring-1 ring-sand-200 transition duration-500 hover:z-20 hover:rotate-0 hover:scale-[1.03]`}
               style={{ zIndex: i + 1, animation: `rise 0.7s ${0.15 * i + 0.2}s both cubic-bezier(0.2,0.7,0.2,1)` }}
             >
               <div className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-sand-200">
                 <Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 640px) 60vw, 270px" className="object-cover" priority={i === 2} />
               </div>
-              <figcaption className="absolute bottom-3 left-4 right-4 flex justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted">
-                <span>{["River rafting", "YS Falls", "Airport pickup"][i]}</span>
-              </figcaption>
             </figure>
           ))}
-          <div className="absolute -bottom-2 right-2 z-10 rotate-6 rounded-2xl bg-sun-400 px-4 py-3 font-display text-lg leading-tight text-ink shadow-ticket sm:right-0">
-            Real guests,
-            <br />
-            real days out.
-          </div>
         </div>
       </div>
     </section>

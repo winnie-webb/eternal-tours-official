@@ -21,11 +21,9 @@ function Footer() {
       <div className="container-x relative py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <p className="eyebrow !text-sun-300">Jamaica Eternal Tours</p>
-            <h2 className="mt-4 max-w-md text-4xl leading-[1.05] tracking-tight sm:text-5xl">
-              Wherever you&apos;re staying, we&apos;ll come get you.
-            </h2>
-            <div className="mt-8 flex flex-col gap-3 text-sm">
+            <h2 className="max-w-md text-4xl leading-[1.05] tracking-tight">Jamaica Eternal Tours</h2>
+            <p className="mt-4 font-semibold">Contacts</p>
+            <div className="mt-3 flex flex-col gap-3 text-sm">
               <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-3 hover:text-sun-300">
                 <FiMail /> {CONTACT.email}
               </a>
