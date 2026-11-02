@@ -180,7 +180,7 @@ function BookingDrawer({ booking: b, onClose, onStatus }) {
     ["Guest", b.name],
     ["Email", b.email && <a className="text-jett-700 underline" href={`mailto:${b.email}`}>{b.email}</a>],
     ["Phone", b.phone_number && <a className="text-jett-700 underline" href={`tel:${b.phone_number}`}>{b.phone_number}</a>],
-    ["Adults / kids", `${b.adults ?? 0} / ${b.kids ?? 0}`],
+    ["Adults / lap infants", `${b.adults ?? 0} / ${b.kids ?? 0}`],
     ["Price per person", b.price_per_person && `$${formatMoney(b.price_per_person)}`],
     ["Wants to pay online", b.pay_online],
     ...(isTransfer

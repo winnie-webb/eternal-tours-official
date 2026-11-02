@@ -4,7 +4,7 @@ const POINTS = [
   ["Private vehicle", "Groups of 1–4 pay a minimum of four times the per-person rate."],
   ["One trip per booking", "Each tour or transfer has its own date and time, so book them separately."],
   ["Hotel pickups", "If you're at a hotel or resort, we meet you in the main lobby."],
-  ["Under 5s", "Children under five ride free with an adult."],
+  ["Lap infants", "Lap infants ride free with an adult."],
   ["Transport only", "Prices cover transportation — excursion and entrance fees are extra."],
 ];
 

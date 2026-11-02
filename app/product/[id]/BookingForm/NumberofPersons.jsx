@@ -39,8 +39,8 @@ function NumberofPersons({ adults, kids, onAdultsChange, onKidsChange }) {
     <fieldset>
       <legend className="field-label">Who&apos;s travelling?</legend>
       <div className="grid gap-3 sm:grid-cols-2">
-        <Stepper id="adults-label" label="Adults" hint="5 years and up" value={adults} min={1} onChange={onAdultsChange} />
-        <Stepper id="kids-label" label="Kids" hint="Under 5 — ride free" value={kids} min={0} onChange={onKidsChange} />
+        <Stepper id="adults-label" label="Adults" hint="Children included" value={adults} min={1} onChange={onAdultsChange} />
+        <Stepper id="kids-label" label="Lap infants" hint="Ride free" value={kids} min={0} onChange={onKidsChange} />
       </div>
     </fieldset>
   );

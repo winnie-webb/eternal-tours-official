@@ -131,7 +131,7 @@ export const TourBookingForm = ({ tour }) => {
           { label: "Date", value: formatDate(picked.date) },
           { label: "Time", value: formatTime(picked.time) },
           { label: "Adults", value: String(adults) },
-          { label: "Kids", value: String(kids) },
+          { label: "Lap infants", value: String(kids) },
         ]}
       />
     </form>

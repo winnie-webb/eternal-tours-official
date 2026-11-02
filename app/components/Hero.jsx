@@ -40,7 +40,7 @@ function Hero() {
 
           <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-ink-soft">
             <li className="flex items-center gap-2"><Tick /> Chartered / private taxi</li>
-            <li className="flex items-center gap-2"><Tick /> Kids under 5 ride free</li>
+            <li className="flex items-center gap-2"><Tick /> Lap infants ride free</li>
             <li className="flex items-center gap-2"><Tick /> Pay on arrival, cash or card</li>
           </ul>
         </div>

@@ -262,7 +262,7 @@ export const TransferBookingForm = ({ tour }) => {
         submitLabel="Book this transfer"
         rows={[
           { label: "Trip", value: typeTitle },
-          { label: "Travellers", value: `${adults} adult${adults === 1 ? "" : "s"}${kids ? ` · ${kids} kid${kids === 1 ? "" : "s"}` : ""}` },
+          { label: "Travellers", value: `${adults} adult${adults === 1 ? "" : "s"}${kids ? ` · ${kids} lap infant${kids === 1 ? "" : "s"}` : ""}` },
           { label: "Staying at", value: placeOfStay.replace("Price", "").trim(), wide: true },
           ...(hasArrival
             ? [{ label: "Lands", value: [formatDate(transferDetails.arrivalDate), formatTime(transferDetails.arrivalTime)].filter(Boolean).join(" · ") }]

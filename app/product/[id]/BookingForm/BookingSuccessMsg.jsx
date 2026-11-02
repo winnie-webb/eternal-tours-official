@@ -15,7 +15,7 @@ function BookingSuccessMsg({ orderNumber, formData }) {
 
   const rows = [
     ["Passenger", formData.name],
-    ["Travellers", `${formData.adults} adult${formData.adults === 1 ? "" : "s"}${formData.kids ? `, ${formData.kids} kid${formData.kids === 1 ? "" : "s"}` : ""}`],
+    ["Travellers", `${formData.adults} adult${formData.adults === 1 ? "" : "s"}${formData.kids ? `, ${formData.kids} lap infant${formData.kids === 1 ? "" : "s"}` : ""}`],
     ...(isTransfer
       ? [
           ["Trip", TRANSFER_LABELS[formData.transfer_type]],
